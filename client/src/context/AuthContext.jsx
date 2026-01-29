@@ -1,8 +1,8 @@
 import { createContext, useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 
-// Direct connection without proxy to rule out proxy issues
-const API_URL = 'http://localhost:5001/api';
+// Use environment variable for API URL with fallback
+const API_URL = `${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api`;
 
 const AuthContext = createContext();
 

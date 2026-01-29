@@ -38,7 +38,7 @@ const MediSafeAssistant = () => {
                 content: m.content
             }));
 
-            const response = await axios.post('http://localhost:5001/api/ai/chat', {
+            const response = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/ai/chat`, {
                 message: userMessage,
                 history: history
             });
@@ -114,8 +114,8 @@ const MediSafeAssistant = () => {
 
                                 <div
                                     className={`max-w-[80%] p-3 rounded-2xl text-sm leading-relaxed shadow-sm ${msg.role === 'user'
-                                            ? 'bg-blue-600 text-white rounded-br-none'
-                                            : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-100 border border-gray-100 dark:border-gray-600 rounded-bl-none'
+                                        ? 'bg-blue-600 text-white rounded-br-none'
+                                        : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-100 border border-gray-100 dark:border-gray-600 rounded-bl-none'
                                         }`}
                                 >
                                     {msg.content}
@@ -173,8 +173,8 @@ const MediSafeAssistant = () => {
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 className={`group flex items-center gap-2 p-4 rounded-full shadow-lg transition-all duration-300 ${isOpen
-                        ? 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-                        : 'bg-gradient-to-r from-blue-600 to-teal-500 text-white hover:shadow-blue-500/30 hover:scale-105'
+                    ? 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                    : 'bg-gradient-to-r from-blue-600 to-teal-500 text-white hover:shadow-blue-500/30 hover:scale-105'
                     }`}
             >
                 {isOpen ? (

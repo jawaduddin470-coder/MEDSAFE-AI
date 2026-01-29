@@ -23,7 +23,7 @@ const FamilyProfiles = () => {
 
     const fetchMembers = async () => {
         try {
-            const res = await axios.get('http://localhost:5001/api/family', config);
+            const res = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/family`, config);
             setMembers(res.data);
             setLoading(false);
         } catch (error) {
@@ -35,7 +35,7 @@ const FamilyProfiles = () => {
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to remove this profile?')) {
             try {
-                await axios.delete(`http://localhost:5001/api/family/${id}`, config);
+                await axios.delete(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/family/${id}`, config);
                 setMembers(members.filter((member) => member._id !== id));
             } catch (error) {
                 console.error(error);
@@ -46,7 +46,7 @@ const FamilyProfiles = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post('http://localhost:5001/api/family', formData, config);
+            const res = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/family`, formData, config);
             setMembers([...members, res.data]);
             setShowModal(false);
             setFormData({ name: '', relation: '', age: '' });

@@ -15,7 +15,7 @@ const MedicationList = () => {
 
     const fetchMedications = async () => {
         try {
-            const { data } = await axios.get('http://localhost:5001/api/medications');
+            const { data } = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/medications`);
             setMedications(data);
         } catch (error) {
             console.error(error);
@@ -42,7 +42,7 @@ const MedicationList = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:5001/api/medications', formData);
+            await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/medications`, formData);
             setFormData({ name: '', dosage: '', frequency: 'Once daily', timeOfDay: [], notes: '' });
             fetchMedications();
         } catch (error) {
@@ -53,7 +53,7 @@ const MedicationList = () => {
     const handleDelete = async (id) => {
         if (!window.confirm('Delete this medication?')) return;
         try {
-            await axios.delete(`http://localhost:5001/api/medications/${id}`);
+            await axios.delete(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/medications/${id}`);
             setMedications(medications.filter(med => med._id !== id));
         } catch (error) {
             alert('Error deleting medication');

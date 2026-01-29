@@ -11,7 +11,7 @@ const Dashboard = () => {
     const handleSubscribe = async (plan) => {
         setSubscribing(true);
         try {
-            const { data } = await axios.put('http://localhost:5001/api/auth/subscription', { plan });
+            const { data } = await axios.put(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/auth/subscription`, { plan });
             updateSubscription(data.subscription);
             alert(`Successfully upgraded to ${plan} plan!`);
         } catch (err) {

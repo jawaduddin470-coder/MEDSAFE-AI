@@ -13,7 +13,7 @@ const RiskAnalysis = () => {
 
     const fetchMedications = async () => {
         try {
-            const { data } = await axios.get('http://localhost:5001/api/medications');
+            const { data } = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/medications`);
             setMedications(data);
         } catch (error) {
             console.error(error);
@@ -29,7 +29,7 @@ const RiskAnalysis = () => {
         setLoading(true);
         try {
             const medNames = medications.map(m => m.name);
-            const { data } = await axios.post('http://localhost:5001/api/analysis/check', { medications: medNames });
+            const { data } = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/analysis/check`, { medications: medNames });
             setAnalysisResult(data);
         } catch (error) {
             console.error(error);

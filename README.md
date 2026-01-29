@@ -1,45 +1,69 @@
-# AI-Based Early Medication Error and Risk Awareness System
+# MedSafe AI - AI-Based Medication Error & Risk Awareness System
 
-A professional MedTech hackathon project designed to prevent medication errors through AI-based awareness and interaction checking.
+A professional MedTech platform designed to prevent medication errors through AI-powered risk analysis, family profiles, and modern UX design.
 
-## 🚀 Features
-- **AI Risk Analysis**: Instantly checks for harmful drug interactions (e.g., Aspirin + Warfarin).
-- **Medication Tracking**: Manage prescriptions, dosage, and frequency.
-- **Family Profiles**: Monitor safety for dependents (Elderly parents, children).
-- **Subscription System**: tiered access for advanced features.
-- **Senior-Friendly UI**: High contrast, large text, and clear warnings.
+---
+
+## 👨‍💻 About the Developer
+**Name:** Mohammed Meraj Uddin  
+**Role:** First-Year Engineering Student  
+**Context:** This is my first real-world full-stack project, built to solve medication safety awareness challenges using the MERN stack.
+
+---
+
+## 🚀 Key Features
+- **🌓 Theme Switching**: Seamless transition between light and dark modes with system preference detection.
+- **🤖 AI Assistant**: Intelligent chatbot for medication safety awareness and regimen understanding.
+- **🛡️ Risk Analysis**: Instantly checks for harmful drug interactions (e.g., Aspirin + Warfarin).
+- **📋 Medication Tracking**: Manage prescriptions, dosage, frequency, and timing.
+- **👨‍👩‍👧‍👦 Family Profiles**: Monitor safety for dependents (Elderly parents, children).
+- **🎬 UX/UI**: Smooth page transitions, hover animations, and fully responsive layout.
+
+---
 
 ## 🛠 Tech Stack
-- **Frontend**: React (Vite), Tailwind CSS, Lucide React
-- **Backend**: Node.js, Express.js, MongoDB (Mongoose)
+- **Frontend**: React (Vite 5), Tailwind CSS, Lucide React
+- **Backend**: Node.js, Express.js
+- **Database**: MongoDB (Mongoose)
+- **AI Integration**: OpenAI (via OpenRouter API)
+- **State Management**: React Context API
 - **Auth**: JWT (JSON Web Tokens)
 
-## 📦 Installation
-Prerequisites: Node.js and MongoDB installed locally.
+---
 
-### 1. Backend Setup
-```bash
-cd medtech-app/server
-npm install
-# Create .env file based on .env.example
-npm start
-```
-*Server runs on port 5001 by default.*
+## 🌍 Global Deployment Guide
 
-### 2. Frontend Setup
-```bash
-cd medtech-app/client
-npm install
-npm run dev
-```
-*Frontend runs on port 5173.*
+### 1. Backend (Hosted on Render.com)
+1. **Repository**: Push this code to your GitHub.
+2. **Setup**: Create a new Web Service on Render and link your repository.
+4. **Build Settings**:
+   - **Root Directory**: `server`
+   - **Build Command**: `npm install`
+   - **Start Command**: `npm start`
+5. **Environment Variables**:
+   - `MONGO_URI`: Your MongoDB Atlas connection string.
+   - `JWT_SECRET`: A secure random string.
+   - `OPENAI_API_KEY`: Your OpenRouter/OpenAI key.
+   - `NODE_ENV`: `production`
 
-## 🧪 Testing the AI Engine
-To verify the risk analysis:
-1. Register a new account.
-2. Add **Aspirin** (100mg).
-3. Add **Warfarin** (5mg).
-4. Go to "Check Risks" and click Analyze. > **Result: HIGH RISK Alert**.
+### 2. Frontend (Hosted on Vercel.com)
+1. **Link Repo**: Import your repo into Vercel.
+2. **Configure Project**:
+   - **Root Directory**: `client`
+   - **Build Command**: `npm run build`
+   - **Output Directory**: `dist`
+3. **Environment Variables**:
+   - `VITE_API_URL`: The URL of your **hosted Render backend** (e.g., `https://medsafe-api.onrender.com`).
+
+---
+
+## 🧪 Local Setup
+1. **Install Dependencies**: `npm install` in both `client` and `server` folders.
+2. **Environment**: Create `.env` files based on `.env.example`.
+3. **Run Backend**: `cd server && npm run dev` (Port 5001).
+4. **Run Frontend**: `cd client && npm run dev` (Port 5173).
+
+---
 
 ## ⚠️ Disclaimer
-This is an assistive tool for awareness only. It does NOT provide medical diagnosis or treatment.
+MedSafe AI is an assistive tool for educational awareness only. It does NOT provide medical diagnosis or treatment. Always consult a healthcare professional.
