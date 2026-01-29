@@ -24,7 +24,6 @@ app.use((req, res, next) => {
 // Routes
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/medications', require('./routes/medicationRoutes'));
-app.use('/api/medications', require('./routes/medicationRoutes'));
 app.use('/api/analysis', require('./routes/analysisRoutes'));
 app.use('/api/ai', require('./routes/aiRoutes'));
 app.use('/api/family', require('./routes/familyRoutes'));
