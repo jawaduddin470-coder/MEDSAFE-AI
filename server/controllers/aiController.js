@@ -13,6 +13,10 @@ if (!process.env.OPENROUTER_API_KEY) {
 const openai = new OpenAI({
     apiKey: process.env.OPENROUTER_API_KEY,
     baseURL: "https://openrouter.ai/api/v1",
+    defaultHeaders: {
+        "HTTP-Referer": "https://medsafe-ai-1.onrender.com", // Status: Required for some models
+        "X-Title": "MedSafe AI", // Optional: Shows up in OpenRouter dashboard
+    }
 });
 
 const SYSTEM_PROMPT = `You are "MediSafe Assistant", a medication safety awareness assistant integrated into the MedTech platform.
