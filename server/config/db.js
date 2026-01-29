@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
 
 const connectDB = async () => {
+    const uri = process.env.MONGO_URI || "";
+    console.log(`Checking MONGO_URI: length=${uri.length}, startsWith="mongodb"=${uri.startsWith('mongodb')}, base64Prefix="${Buffer.from(uri.substring(0, 15)).toString('base64')}"`);
+
     try {
         console.log('Attempting to connect to MongoDB...');
         const conn = await mongoose.connect(process.env.MONGO_URI, {
