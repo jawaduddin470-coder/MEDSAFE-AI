@@ -4,6 +4,12 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 // Initialize OpenAI with OpenRouter
+if (!process.env.OPENROUTER_API_KEY) {
+    console.error('❌ OPENROUTER_API_KEY is missing from environment variables!');
+} else {
+    console.log('✅ OPENROUTER_API_KEY is present (starting with ' + process.env.OPENROUTER_API_KEY.substring(0, 5) + '...)');
+}
+
 const openai = new OpenAI({
     apiKey: process.env.OPENROUTER_API_KEY,
     baseURL: "https://openrouter.ai/api/v1",

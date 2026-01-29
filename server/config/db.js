@@ -2,17 +2,19 @@ const mongoose = require('mongoose');
 
 const connectDB = async () => {
     try {
+        console.log('Attempting to connect to MongoDB...');
         const conn = await mongoose.connect(process.env.MONGO_URI, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
+            serverSelectionTimeoutMS: 5000,
+            connectTimeoutMS: 10000,
         });
 
-        console.log(`MongoDB Connected: ${conn.connection.host}`);
+        console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
     } catch (error) {
-        console.error(`Error: ${error.message}`);
-        console.error('Make sure MongoDB is running locally (brew services start mongodb-community) or update MONGO_URI in .env');
-        // Do not exit process so the server remains up to report the error
-        // process.exit(1); 
+        console.error(`❌ MongoDB Connection Error: ${error.message}`);
+        console.error('Check your MONGO_URI in Render Environment Variables.');
+        console.error('Also ensure 0.0.0.0/0 is allowed in MongoDB Atlas Network Access.');
     }
 };
 
