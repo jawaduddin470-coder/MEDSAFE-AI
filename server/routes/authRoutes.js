@@ -4,7 +4,6 @@ const {
     registerUser,
     loginUser,
     getMe,
-    getMe,
     updateSubscription,
     addFcmToken,
 } = require('../controllers/authController');
