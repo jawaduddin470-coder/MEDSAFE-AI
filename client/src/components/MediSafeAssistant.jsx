@@ -12,6 +12,7 @@ const MediSafeAssistant = () => {
     ]);
     const [inputText, setInputText] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
     const messagesEndRef = useRef(null);
 
     const scrollToBottom = () => {
@@ -22,41 +23,50 @@ const MediSafeAssistant = () => {
         scrollToBottom();
     }, [messages, isOpen]);
 
+    useEffect(() => {
+        const handleToggle = () => setIsOpen(prev => !prev);
+        window.addEventListener('toggle-assistant', handleToggle);
+        return () => window.removeEventListener('toggle-assistant', handleToggle);
+    }, []);
+
     const handleSendMessage = async (e) => {
-        e.preventDefault();
+        if (e) e.preventDefault();
         if (!inputText.trim() || isLoading) return;
 
-        const userMessage = inputText.trim();
-        setMessages((prev) => [...prev, { role: 'user', content: userMessage }]);
+        const userMessage = { role: 'user', content: inputText.trim() };
+        setMessages((prev) => [...prev, userMessage]);
+        const currentInput = inputText;
         setInputText('');
         setIsLoading(true);
+        setError(null);
 
         try {
-            // Prepare history for API (excluding the very first welcome message if needed, or mapping correctly)
-            const history = messages.map(m => ({
-                role: m.role === 'assistant' ? 'model' : 'user',
-                content: m.content
-            }));
-
-            const response = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/ai/chat`, {
-                message: userMessage,
-                history: history
+            // Filter out the initial welcome message from assistant if it's the first message
+            // Gemini history MUST start with a 'user' message if history is provided.
+            const validHistory = messages.filter((msg, idx) => {
+                if (idx === 0 && msg.role === 'assistant') return false;
+                return true;
             });
 
-            setMessages((prev) => [
-                ...prev,
-                { role: 'assistant', content: response.data.response },
-            ]);
-        } catch (error) {
-            console.error('Chat Error:', error);
-            let errorMessage = "I'm having trouble connecting right now. Please try again later.";
-            if (error.response && error.response.status === 503) {
-                errorMessage = "My AI services are currently unavailable (configuration issue). Please contact support.";
+            const response = await axios.post('/api/ai/chat', {
+                message: currentInput,
+                history: validHistory
+            });
+
+            if (response.data && response.data.response) { // Added check for response data
+                setMessages(prev => [...prev, { role: 'assistant', content: response.data.response }]);
+            } else {
+                throw new Error('Incomplete response from AI');
             }
-            setMessages((prev) => [
-                ...prev,
-                { role: 'assistant', content: errorMessage },
-            ]);
+        } catch (err) { // Changed error to err
+            console.error('AI Chat Error:', err); // Updated log message
+            const errorMessage = err.response?.data?.message || err.message || 'I am having trouble connecting right now. Please check your internet or try again later.';
+            setError(errorMessage); // Set error state
+            setMessages(prev => [...prev, {
+                role: 'assistant',
+                content: "I'm sorry, I'm experiencing connection issues. Please make sure the server is reachable.",
+                isError: true // Added isError flag
+            }]);
         } finally {
             setIsLoading(false);
         }
@@ -152,7 +162,7 @@ const MediSafeAssistant = () => {
                                 value={inputText}
                                 onChange={(e) => setInputText(e.target.value)}
                                 placeholder="Ask about medication safety..."
-                                className="w-full pl-4 pr-12 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
+                                className="w-full pl-4 pr-12 py-3 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-medium text-sm text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 shadow-inner"
                             />
                             <button
                                 type="submit"

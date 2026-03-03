@@ -12,8 +12,12 @@ connectDB();
 const app = express();
 
 // Middleware
-app.use(cors());
-app.use(express.json());
+const corsOptions = {
+    origin: process.env.FRONTEND_URL || '*',
+    credentials: true,
+};
+app.use(cors(corsOptions));
+app.use(express.json({ limit: '10mb' }));
 
 // Request logging middleware
 app.use((req, res, next) => {
@@ -27,6 +31,10 @@ app.use('/api/medications', require('./routes/medicationRoutes'));
 app.use('/api/analysis', require('./routes/analysisRoutes'));
 app.use('/api/ai', require('./routes/aiRoutes'));
 app.use('/api/family', require('./routes/familyRoutes'));
+app.use('/api/reminders', require('./routes/reminderRoutes'));
+
+// Initialize Backend Scheduler
+require('./utils/scheduler');
 
 // Root endpoint
 app.get('/', (req, res) => {

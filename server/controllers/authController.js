@@ -107,9 +107,36 @@ const updateSubscription = asyncHandler(async (req, res) => {
     }
 });
 
+// @desc    Add FCM token
+// @route   POST /api/auth/fcm-token
+// @access  Private
+const addFcmToken = asyncHandler(async (req, res) => {
+    const { token } = req.body;
+
+    if (!token) {
+        res.status(400);
+        throw new Error('Please add a token');
+    }
+
+    const user = await User.findById(req.user.id);
+
+    if (user) {
+        // Prevent duplicates
+        if (!user.fcmTokens.includes(token)) {
+            user.fcmTokens.push(token);
+            await user.save();
+        }
+        res.status(200).json({ message: 'Token added successfully' });
+    } else {
+        res.status(404);
+        throw new Error('User not found');
+    }
+});
+
 module.exports = {
     registerUser,
     loginUser,
     getMe,
     updateSubscription,
+    addFcmToken,
 };

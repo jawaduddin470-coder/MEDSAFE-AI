@@ -38,6 +38,7 @@ const userSchema = mongoose.Schema(
             },
         },
         profiles: [profileSchema],
+        fcmTokens: [{ type: String }], // Array of FCM device tokens for the user
     },
     {
         timestamps: true,

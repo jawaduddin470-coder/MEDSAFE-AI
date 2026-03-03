@@ -47,17 +47,20 @@ const RiskAnalysis = () => {
     };
 
     return (
-        <div className="max-w-4xl mx-auto space-y-8">
-            <div className="text-center">
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">Medication Risk Awareness</h1>
-                <p className="text-gray-500">Analyze your current regimen for potential interactions.</p>
+        <div className="max-w-4xl mx-auto space-y-10">
+            <div className="text-center space-y-4">
+                <h1 className="text-5xl font-black text-gray-900 dark:text-white tracking-tighter uppercase italic">
+                    Risk <span className="text-indigo-600 dark:text-indigo-400">Analysis</span>
+                </h1>
+                <p className="text-gray-500 font-bold uppercase tracking-[0.3em] text-[10px]">Scientific cross-referencing engine</p>
             </div>
 
             {/* Action Section */}
-            <div className="bg-white p-8 rounded-2xl shadow-soft border border-gray-100 text-center space-y-6">
-                <div className="flex flex-wrap justify-center gap-2 mb-4">
+            <div className="glass-card p-10 rounded-[2.5rem] border-white/5 relative overflow-hidden text-center space-y-8 group">
+                <div className="absolute inset-0 bg-gradient-to-br from-teal-500/5 via-transparent to-purple-500/5 opacity-50" />
+                <div className="flex flex-wrap justify-center gap-3 relative z-10">
                     {medications.map((med, idx) => (
-                        <span key={idx} className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm font-medium border border-blue-100">
+                        <span key={idx} className="bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 px-5 py-2 rounded-xl text-xs font-black border border-indigo-500/20 uppercase tracking-widest">
                             {med.name}
                         </span>
                     ))}
@@ -66,50 +69,56 @@ const RiskAnalysis = () => {
                 <button
                     onClick={runAnalysis}
                     disabled={loading || medications.length === 0}
-                    className={`px-8 py-4 rounded-full font-bold text-lg shadow-lg transition-all flex items-center justify-center mx-auto ${loading ? 'bg-gray-200 text-gray-500 cursor-not-allowed' : 'bg-primary hover:bg-blue-700 text-white shadow-blue-500/30'
-                        }`}
+                    className={`relative z-10 btn-primary !px-12 !py-5 font-black text-sm tracking-widest uppercase transition-all duration-500 hover:scale-105 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
-                    {loading ? <RefreshCw className="animate-spin mr-2" /> : <Activity className="mr-2" />}
-                    {loading ? 'Analyzing...' : 'Analyze Safety Risks'}
+                    {loading ? <RefreshCw className="animate-spin mr-3" /> : <ShieldAlert className="mr-3" />}
+                    {loading ? 'Crunching Data...' : 'Start Safety Audit'}
                 </button>
 
                 {medications.length < 2 && (
-                    <p className="text-sm text-amber-500 flex items-center justify-center">
-                        <AlertTriangle size={14} className="mr-1" /> Add at least 2 medications to enable analysis.
+                    <p className="text-[10px] text-amber-500/80 font-bold uppercase tracking-widest flex items-center justify-center gap-2">
+                        <AlertTriangle size={14} /> Add {2 - medications.length} more medication{2 - medications.length !== 1 ? 's' : ''} to enable audit.
                     </p>
                 )}
             </div>
 
             {/* Results Section */}
             {analysisResult && (
-                <div className="space-y-6 animate-fade-in-up">
+                <div className="space-y-8 animate-in slide-in-from-bottom duration-700">
                     {/* Score Card */}
-                    <div className={`p-8 rounded-2xl border-l-8 shadow-sm ${getRiskColor(analysisResult.riskLevel)}`}>
-                        <div className="flex items-center mb-4">
-                            {analysisResult.riskLevel === 'High' ? <ShieldAlert size={40} className="mr-4" /> : <CheckCircle size={40} className="mr-4" />}
+                    <div className="glass-card p-10 rounded-[2.5rem] border-white/5 relative overflow-hidden group shadow-2xl">
+                        <div className={`absolute left-0 top-0 h-full w-2 ${analysisResult.riskLevel === 'High' ? 'bg-red-500' : analysisResult.riskLevel === 'Moderate' ? 'bg-amber-500' : 'bg-green-500'}`} />
+                        <div className="flex items-start gap-6">
+                            <div className={`${analysisResult.riskLevel === 'High' ? 'text-red-500' : 'text-indigo-500'} mt-1`}>
+                                {analysisResult.riskLevel === 'High' ? <ShieldAlert size={48} /> : <CheckCircle size={48} />}
+                            </div>
                             <div>
-                                <h2 className="text-2xl font-bold">Risk Level: {analysisResult.riskLevel}</h2>
-                                <p className="opacity-90">{analysisResult.summary}</p>
+                                <h2 className="text-3xl font-black text-gray-900 dark:text-white tracking-tight uppercase mb-3">Audit: {analysisResult.riskLevel} Risk</h2>
+                                <p className="text-gray-600 dark:text-gray-400 font-medium leading-relaxed">{analysisResult.summary}</p>
                             </div>
                         </div>
                     </div>
 
                     {/* Interactions List */}
                     {analysisResult.interactions.length > 0 && (
-                        <div className="bg-white rounded-2xl shadow-soft border border-gray-100 overflow-hidden">
-                            <div className="bg-gray-50 px-6 py-4 border-b border-gray-100">
-                                <h3 className="font-bold text-gray-700">Identified Interactions</h3>
+                        <div className="glass-card rounded-[2.5rem] border-white/5 overflow-hidden">
+                            <div className="bg-indigo-50 dark:bg-white/5 px-8 py-5 border-b border-indigo-100 dark:border-white/5">
+                                <h3 className="font-black text-indigo-600 dark:text-white text-sm uppercase tracking-widest">Identified Interactions</h3>
                             </div>
-                            <div className="divide-y divide-gray-100">
+                            <div className="divide-y divide-white/5">
                                 {analysisResult.interactions.map((interaction, idx) => (
-                                    <div key={idx} className="p-6">
-                                        <div className="flex items-center mb-2">
-                                            <span className="font-bold text-gray-900 mr-2">{interaction.med1}</span>
-                                            <span className="text-gray-400 text-sm mx-2">+</span>
-                                            <span className="font-bold text-gray-900 mr-2">{interaction.med2}</span>
-                                            <span className="bg-red-100 text-red-700 text-xs px-2 py-0.5 rounded ml-auto font-medium">{interaction.severity.toUpperCase()}</span>
+                                    <div key={idx} className="p-8 hover:bg-white/[0.03] transition-colors group">
+                                        <div className="flex items-center justify-between mb-3">
+                                            <div className="flex items-center gap-3">
+                                                <span className="text-lg font-black text-gray-900 dark:text-white uppercase tracking-tighter">{interaction.med1}</span>
+                                                <span className="text-indigo-500/40 font-black">+</span>
+                                                <span className="text-lg font-black text-gray-900 dark:text-white uppercase tracking-tighter">{interaction.med2}</span>
+                                            </div>
+                                            <span className={`text-[10px] px-3 py-1 rounded-lg font-black uppercase tracking-widest border ${interaction.severity === 'High' ? 'bg-red-500/10 text-red-500 border-red-500/20' : 'bg-amber-500/10 text-amber-500 border-amber-500/20'}`}>
+                                                {interaction.severity}
+                                            </span>
                                         </div>
-                                        <p className="text-gray-600 text-sm leading-relaxed">
+                                        <p className="text-gray-500 text-sm leading-relaxed font-medium">
                                             {interaction.description}
                                         </p>
                                     </div>
@@ -119,11 +128,10 @@ const RiskAnalysis = () => {
                     )}
 
                     {/* Disclaimer */}
-                    <div className="bg-amber-50 text-amber-800 p-4 rounded-xl text-sm border border-amber-100 flex items-start">
-                        <AlertTriangle size={16} className="min-w-[16px] mr-2 mt-0.5" />
-                        <p>
-                            <strong>Important:</strong> This analysis is computer-generated and may not cover all possible interactions.
-                            Risk factors vary by individual. Always consult your healthcare provider.
+                    <div className="bg-amber-500/5 text-amber-500 p-6 rounded-2xl border border-amber-500/10 flex items-start gap-4">
+                        <AlertTriangle size={20} className="mt-0.5 shrink-0" />
+                        <p className="text-xs font-bold leading-relaxed">
+                            <span className="uppercase tracking-widest">Medical Disclaimer:</span> This analysis is computer-generated for educational awareness and may not cover all interactions. Risk factors vary by individual. Always consult your primary care physician before making changes.
                         </p>
                     </div>
                 </div>

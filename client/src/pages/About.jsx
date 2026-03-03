@@ -1,195 +1,205 @@
 import React from 'react';
-import { Code, Zap, Smartphone, Moon, Sparkles, Target, Rocket } from 'lucide-react';
+import { Code, Zap, Smartphone, Moon, Sparkles, Target, Rocket, Shield, Heart, GraduationCap, Github } from 'lucide-react';
 
 const About = () => {
     return (
-        <div className="space-y-12 max-w-4xl mx-auto">
-            {/* Hero Section */}
-            <section className="text-center space-y-4 py-8">
-                <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-gray-100">
-                    About This Project
-                </h1>
-                <p className="text-xl text-gray-600 dark:text-gray-400">
-                    A medication safety platform built by a first-year engineering student
-                </p>
-            </section>
-
-            {/* Personal Introduction */}
-            <section className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-soft border border-gray-100 dark:border-gray-700">
-                <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100 flex items-center hover:text-blue-500 dark:hover:text-blue-400 transition-all duration-200 cursor-pointer hover:scale-[1.02] origin-left">
-                    <Code className="mr-3 text-primary dark:text-blue-400" size={28} />
-                    About the Developer
-                </h2>
-                <div className="space-y-4 text-gray-700 dark:text-gray-300">
-                    <p className="leading-relaxed">
-                        Hi! I'm <strong className="text-gray-900 dark:text-gray-100">Mohammed Meraj Uddin</strong>,
-                        a first-year engineering student passionate about building technology that makes a difference.
-                        This is my first real-world project, and I'm excited to share it with you!
+        <div className="max-w-6xl mx-auto space-y-20 pb-20 animate-fadeIn">
+            {/* ── Hero Section ────────────────────────────── */}
+            <section className="relative py-20 text-center overflow-hidden">
+                <div className="absolute inset-0 -z-10 bg-gradient-to-b from-indigo-500/5 to-transparent dark:from-indigo-500/10" />
+                <div className="space-y-4 relative z-10">
+                    <p className="text-sm font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-[0.5em] animate-pulse-slow">
+                        Pioneering Healthcare Safety
                     </p>
-                    <p className="leading-relaxed">
-                        As a beginner in web development, I wanted to create something meaningful while learning
-                        modern technologies. This project represents my journey from learning the basics to building
-                        a fully functional, production-ready application.
+                    <h1 className="text-6xl md:text-8xl font-black text-gray-900 dark:text-white tracking-tighter uppercase italic">
+                        The <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-blue-500 dark:from-indigo-400 dark:to-cyan-400">Mission</span>
+                    </h1>
+                </div>
+                <div className="max-w-2xl mx-auto mt-8 px-4">
+                    <div className="h-1 w-24 bg-gradient-to-r from-indigo-600 to-blue-500 mx-auto rounded-full mb-8" />
+                    <p className="text-xl text-gray-600 dark:text-gray-400 font-medium leading-relaxed italic">
+                        "Engineering a world where medication errors are history through artificial intelligence and proactive safety ecosystems."
                     </p>
                 </div>
             </section>
 
-            {/* Project Description */}
-            <section className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-soft border border-gray-100 dark:border-gray-700">
-                <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100 flex items-center hover:text-blue-500 dark:hover:text-blue-400 transition-all duration-200 cursor-pointer hover:scale-[1.02] origin-left">
-                    <Sparkles className="mr-3 text-teal-500" size={28} />
-                    About MedSafe AI
-                </h2>
-                <div className="space-y-4 text-gray-700 dark:text-gray-300">
-                    <p className="leading-relaxed">
-                        <strong className="text-gray-900 dark:text-gray-100">MedSafe AI</strong> is a medication
-                        safety awareness platform designed to help users understand potential risks in their medication
-                        regimens. The platform provides educational insights about drug interactions, dosage conflicts,
-                        and timing risks.
-                    </p>
-                    <p className="leading-relaxed">
-                        This project addresses a real-world problem: medication errors are a leading cause of preventable
-                        harm. While this platform is for educational purposes only and not a substitute for professional
-                        medical advice, it aims to raise awareness and encourage users to have informed conversations
-                        with their healthcare providers.
-                    </p>
-                </div>
-            </section>
+            {/* ── Developer Spotlight ──────────────────────── */}
+            <section className="relative px-4">
+                <div className="glass-card rounded-[3rem] p-1 md:p-12 border-indigo-500/10 overflow-hidden relative group">
+                    {/* Decorative Background */}
+                    <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-96 h-96 bg-indigo-500/10 rounded-full blur-[100px] group-hover:bg-indigo-500/20 transition-all duration-700" />
 
-            {/* Key Features */}
-            <section className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-soft border border-gray-100 dark:border-gray-700">
-                <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-gray-100 flex items-center hover:text-blue-500 dark:hover:text-blue-400 transition-all duration-200 cursor-pointer hover:scale-[1.02] origin-left">
-                    <Zap className="mr-3 text-amber-500" size={28} />
-                    Key Features
-                </h2>
-                <div className="grid md:grid-cols-2 gap-4">
-                    <FeatureCard
-                        icon={<Smartphone size={20} />}
-                        title="Fully Responsive"
-                        description="Works seamlessly on mobile, tablet, and desktop devices"
-                    />
-                    <FeatureCard
-                        icon={<Moon size={20} />}
-                        title="Dark/Light Theme"
-                        description="Smooth theme switching with system preference detection"
-                    />
-                    <FeatureCard
-                        icon={<Sparkles size={20} />}
-                        title="Modern Animations"
-                        description="Smooth page transitions and micro-interactions"
-                    />
-                    <FeatureCard
-                        icon={<Code size={20} />}
-                        title="Clean Code"
-                        description="Modular, well-commented, and maintainable codebase"
-                    />
-                    <FeatureCard
-                        icon={<Zap size={20} />}
-                        title="AI Assistant"
-                        description="Intelligent chatbot for medication safety awareness"
-                    />
-                    <FeatureCard
-                        icon={<Target size={20} />}
-                        title="Family Profiles"
-                        description="Manage medication safety for your loved ones"
-                    />
-                </div>
-            </section>
+                    <div className="relative z-10 grid lg:grid-cols-12 gap-12 items-center">
+                        <div className="lg:col-span-5 space-y-8">
+                            <div className="relative inline-block">
+                                <div className="w-24 h-24 rounded-3xl bg-indigo-600 flex items-center justify-center text-white shadow-2xl shadow-indigo-500/50 mb-6">
+                                    <GraduationCap size={48} strokeWidth={1.5} />
+                                </div>
+                                <div className="absolute -bottom-2 -right-2 bg-white dark:bg-gray-900 p-2 rounded-xl shadow-lg border border-gray-100 dark:border-gray-800">
+                                    <Code size={20} className="text-indigo-600" />
+                                </div>
+                            </div>
 
-            {/* Aim & Objectives */}
-            <section className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-soft border border-gray-100 dark:border-gray-700">
-                <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100 flex items-center hover:text-blue-500 dark:hover:text-blue-400 transition-all duration-200 cursor-pointer hover:scale-[1.02] origin-left">
-                    <Target className="mr-3 text-purple-500" size={28} />
-                    Aim & Objectives
-                </h2>
-                <div className="space-y-4">
-                    <div>
-                        <h3 className="font-semibold text-lg text-gray-900 dark:text-gray-100 mb-2 hover:text-blue-500 dark:hover:text-blue-400 transition-all duration-200 cursor-pointer hover:translate-x-1 origin-left">Project Aim</h3>
-                        <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                            To create an accessible, user-friendly platform that raises awareness about medication
-                            safety and helps users make informed decisions about their health.
-                        </p>
-                    </div>
-                    <div>
-                        <h3 className="font-semibold text-lg text-gray-900 dark:text-gray-100 mb-2 hover:text-blue-500 dark:hover:text-blue-400 transition-all duration-200 cursor-pointer hover:translate-x-1 origin-left">Key Objectives</h3>
-                        <ul className="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
-                            <li>Provide educational information about medication interactions</li>
-                            <li>Enable users to track medications for themselves and family members</li>
-                            <li>Offer AI-powered assistance for common medication safety questions</li>
-                            <li>Create a modern, accessible interface that works on all devices</li>
-                            <li>Build a production-ready application following best practices</li>
-                        </ul>
+                            <div className="space-y-4">
+                                <h2 className="text-4xl font-black text-gray-900 dark:text-white uppercase italic tracking-tight">The Developer</h2>
+                                <p className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">Mohammed Meraj Uddin</p>
+                                <p className="text-gray-500 dark:text-gray-500 font-bold uppercase tracking-widest text-sm flex items-center gap-2">
+                                    <Target size={14} /> First-Year Engineering Student
+                                </p>
+                            </div>
+
+                            <div className="flex gap-4">
+                                <a
+                                    href="https://merajuddin.lovable.app"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="btn-primary !py-2 !px-4 text-xs inline-block"
+                                >
+                                    VIEW PORTFOLIO
+                                </a>
+                                <a
+                                    href="https://github.com/jawaduddin470-coder-github"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="btn-secondary !py-2 !px-4 text-xs flex items-center gap-2 inline-block"
+                                >
+                                    <Github size={14} /> GITHUB
+                                </a>
+                            </div>
+                        </div>
+
+                        <div className="lg:col-span-7 space-y-6 text-lg text-gray-700 dark:text-gray-300 font-medium leading-relaxed">
+                            <p className="first-letter:text-5xl first-letter:font-black first-letter:text-indigo-600 first-letter:mr-3 first-letter:float-left">
+                                Dedication to engineering digital solutions that solve critical human problems is at the core of my work.
+                                Medsafe AI is my flagship project, born from a desire to merge healthcare safety with cutting-edge software engineering.
+                            </p>
+                            <p className="bg-white/50 dark:bg-white/5 p-6 rounded-2xl border border-gray-100 dark:border-white/5 backdrop-blur-sm shadow-sm italic">
+                                "This platform represents a journey of intense learning—from mastering the fundamentals to implementing production-grade architectures like Firebase Cloud Messaging and AI-driven analysis."
+                            </p>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            {/* Future Scope */}
-            <section className="bg-gradient-to-br from-blue-50 to-teal-50 dark:from-gray-800 dark:to-gray-700 p-8 rounded-2xl shadow-soft border border-blue-100 dark:border-gray-600">
-                <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100 flex items-center hover:text-blue-500 dark:hover:text-blue-400 transition-all duration-200 cursor-pointer hover:scale-[1.02] origin-left">
-                    <Rocket className="mr-3 text-blue-600 dark:text-blue-400" size={28} />
-                    Future Enhancements
-                </h2>
-                <div className="space-y-3 text-gray-700 dark:text-gray-300">
-                    <p className="leading-relaxed">
-                        As I continue learning and growing as a developer, I plan to add:
+            {/* ── Core Philosophy ──────────────────────────── */}
+            <section className="px-4 grid md:grid-cols-2 gap-8">
+                <div className="glass-card p-10 rounded-[2.5rem] border-blue-500/10 relative group hover:-translate-y-2 transition-all duration-500">
+                    <div className="w-14 h-14 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-500 mb-8 border border-blue-500/20 group-hover:scale-110 transition-transform">
+                        <Sparkles size={28} />
+                    </div>
+                    <h3 className="text-2xl font-black text-gray-900 dark:text-white mb-6 uppercase italic tracking-tight">The Platform</h3>
+                    <p className="text-gray-700 dark:text-gray-400 font-medium leading-relaxed mb-6">
+                        <span className="text-indigo-600 dark:text-white font-black tracking-widest uppercase text-xs">Medsafe AI</span> is more than just a reminder app.
+                        It's a comprehensive safety ecosystem designed to audit medication regimens for lethal interactions and dosage conflicts.
                     </p>
-                    <ul className="list-disc list-inside space-y-2 ml-4">
-                        <li>Advanced AI-powered risk analysis using machine learning</li>
-                        <li>Integration with pharmacy databases for real-time drug information</li>
-                        <li>Medication reminder system with push notifications</li>
-                        <li>Multi-language support for global accessibility</li>
-                        <li>Mobile app versions for iOS and Android</li>
-                        <li>Integration with wearable devices for health monitoring</li>
-                        <li>Community features for sharing experiences (moderated)</li>
-                    </ul>
+                    <p className="text-gray-600 dark:text-gray-500 text-sm font-semibold uppercase tracking-widest flex items-center gap-2">
+                        <Shield size={16} className="text-indigo-500" /> Engineering Safety
+                    </p>
+                </div>
+
+                <div className="glass-card p-10 rounded-[2.5rem] border-indigo-500/10 relative group hover:-translate-y-2 transition-all duration-500">
+                    <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-500 mb-8 border border-indigo-500/20 group-hover:scale-110 transition-transform">
+                        <Heart size={28} />
+                    </div>
+                    <h3 className="text-2xl font-black text-gray-900 dark:text-white mb-6 uppercase italic tracking-tight">Current Impact</h3>
+                    <p className="text-gray-700 dark:text-gray-400 font-medium leading-relaxed mb-6">
+                        By leveraging generative AI and systematic cross-referencing, we aim to eliminate preventable medication errors—a major cause of global health incidents.
+                        We empower users with knowledge for high-level medical discussions.
+                    </p>
+                    <p className="text-gray-600 dark:text-gray-500 text-sm font-semibold uppercase tracking-widest flex items-center gap-2">
+                        <Zap size={16} className="text-indigo-500" /> Actionable Intelligence
+                    </p>
                 </div>
             </section>
 
-            {/* Tech Stack */}
-            <section className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-soft border border-gray-100 dark:border-gray-700">
-                <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100 hover:text-blue-500 dark:hover:text-blue-400 transition-all duration-200 cursor-pointer hover:scale-[1.02] origin-left">
-                    Technologies Used
-                </h2>
-                <div className="grid md:grid-cols-3 gap-4">
-                    <TechBadge name="React" category="Frontend" />
-                    <TechBadge name="Node.js" category="Backend" />
-                    <TechBadge name="MongoDB" category="Database" />
-                    <TechBadge name="Tailwind CSS" category="Styling" />
-                    <TechBadge name="OpenAI API" category="AI" />
-                    <TechBadge name="Express" category="Backend" />
+            {/* ── Key Objectives ────────────────────────────── */}
+            <section className="px-4">
+                <div className="text-center mb-12">
+                    <h2 className="text-4xl font-black text-gray-900 dark:text-white uppercase italic tracking-tight">Core Objectives</h2>
+                    <p className="text-gray-500 font-bold uppercase tracking-widest text-xs mt-2">Strategic roadmap for safety</p>
+                </div>
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <ObjectiveBox
+                        icon={<Target size={24} />}
+                        title="Global Awareness"
+                        text="Creating an accessible platform that raises awareness about medication safety."
+                    />
+                    <ObjectiveBox
+                        icon={<Shield size={24} />}
+                        title="Interaction Audit"
+                        text="Providing educational information about lethal drug-to-drug interactions."
+                    />
+                    <ObjectiveBox
+                        icon={<Zap size={24} />}
+                        title="AI Integration"
+                        text="Leveraging LLMs for common medication safety questions and dosage analysis."
+                    />
+                    <ObjectiveBox
+                        icon={<Smartphone size={24} />}
+                        title="Accessibility"
+                        text="Modern, responsive interface that works flawlessly across all mobile devices."
+                    />
+                    <ObjectiveBox
+                        icon={<Rocket size={24} />}
+                        title="Production Ready"
+                        text="Built with industry-standard practices, ensuring performance and scalability."
+                    />
+                    <ObjectiveBox
+                        icon={<GraduationCap size={24} />}
+                        title="User Empowerment"
+                        text="Empowering individuals with the data required for informed medical decisions."
+                    />
                 </div>
             </section>
 
-            {/* Closing Note */}
-            <section className="text-center py-8">
-                <p className="text-gray-600 dark:text-gray-400 italic">
-                    "This project is a learning journey, and I'm continuously improving it.
-                    Thank you for checking it out!"
+            {/* ── Roadmap Timeline ──────────────────────────── */}
+            <section className="px-4 relative">
+                <div className="max-w-4xl mx-auto glass-card rounded-[3rem] p-12 border-indigo-500/10">
+                    <h2 className="text-3xl font-black text-gray-900 dark:text-white mb-10 flex items-center gap-4 uppercase italic tracking-tight">
+                        <Rocket className="text-indigo-500" size={32} /> Future Enhancements
+                    </h2>
+                    <div className="space-y-8 relative">
+                        {/* Timeline Line */}
+                        <div className="absolute left-[11px] top-2 bottom-2 w-0.5 bg-indigo-500/20" />
+
+                        <TimelineItem label="Advanced AI Analysis" text="Deep machine learning for personalized risk prediction." />
+                        <TimelineItem label="Database Integration" text="Real-time synchronization with global pharmacy databases." />
+                        <TimelineItem label="Mobile Natives" text="Dedicated iOS and Android applications with native performance." />
+                        <TimelineItem label="Global Scale" text="Multi-language support and international drug labeling." />
+                        <TimelineItem label="Vitals Sync" text="Integration with wearable devices for real-time health monitoring." />
+                    </div>
+                </div>
+            </section>
+
+            {/* ── Closing Note ─────────────────────────────── */}
+            <section className="text-center py-20 px-4 space-y-6">
+                <p className="text-2xl text-gray-600 dark:text-gray-400 font-medium italic max-w-2xl mx-auto">
+                    "This project is a continuous learning journey. I'm dedicated to evolving its intelligence every single day."
                 </p>
-                <p className="text-gray-900 dark:text-gray-100 font-semibold mt-2">
-                    - Mohammed Meraj Uddin
-                </p>
+                <div className="space-y-1">
+                    <p className="text-xl font-black text-indigo-600 dark:text-indigo-400 uppercase italic tracking-tight">Mohammed Meraj Uddin</p>
+                    <p className="text-xs font-bold text-gray-500 uppercase tracking-[0.4em]">Engineering Student & Developer</p>
+                </div>
             </section>
         </div>
     );
 };
 
-const FeatureCard = ({ icon, title, description }) => (
-    <div className="flex items-start space-x-3 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-100 dark:border-gray-600">
-        <div className="text-primary dark:text-blue-400 mt-1">
-            {icon}
-        </div>
-        <div>
-            <h3 className="font-semibold text-gray-900 dark:text-gray-100 hover:text-blue-500 dark:hover:text-blue-400 transition-all duration-200 cursor-pointer hover:translate-x-1 origin-left">{title}</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">{description}</p>
-        </div>
+const ObjectiveBox = ({ icon, title, text }) => (
+    <div className="p-8 rounded-[2.5rem] bg-indigo-50/30 dark:bg-white/5 border border-indigo-500/10 hover:border-indigo-500/30 transition-all duration-300 group hover:-translate-y-1">
+        <div className="text-indigo-600 dark:text-indigo-400 mb-6 group-hover:scale-110 transition-transform origin-left">{icon}</div>
+        <h3 className="font-black text-gray-900 dark:text-white text-lg mb-3 uppercase italic tracking-tight">{title}</h3>
+        <p className="text-gray-600 dark:text-gray-400 text-sm font-medium leading-relaxed">{text}</p>
     </div>
 );
 
-const TechBadge = ({ name, category }) => (
-    <div className="text-center p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-200 dark:border-gray-600">
-        <p className="font-semibold text-gray-900 dark:text-gray-100">{name}</p>
-        <p className="text-xs text-gray-500 dark:text-gray-400">{category}</p>
+const TimelineItem = ({ label, text }) => (
+    <div className="relative pl-10 group">
+        <div className="absolute left-0 top-1.5 w-6 h-6 rounded-full bg-white dark:bg-gray-900 border-2 border-indigo-100 dark:border-indigo-500/30 group-hover:border-indigo-500 transition-colors z-10" />
+        <div>
+            <h4 className="font-black text-gray-900 dark:text-white uppercase italic tracking-tight group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{label}</h4>
+            <p className="text-gray-600 dark:text-gray-500 font-medium text-sm">{text}</p>
+        </div>
     </div>
 );
 

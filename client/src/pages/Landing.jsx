@@ -1,59 +1,71 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ShieldCheck, Activity, Users, AlertTriangle, ArrowRight } from 'lucide-react';
+import { ShieldCheck, Activity, Users, AlertTriangle, ArrowRight, Bell } from 'lucide-react';
 
 const Landing = () => {
     return (
         <div className="space-y-20">
             {/* Hero Section */}
-            <section className="text-center space-y-8 py-10 md:py-20">
-                <div className="inline-flex items-center bg-blue-50 text-primary px-4 py-2 rounded-full font-medium text-sm">
-                    <Activity size={16} className="mr-2" />
-                    AI-Powered Medication Safety Assistant
+            <section className="text-center space-y-10 py-16 md:py-28 relative overflow-hidden">
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-teal-500/5 blur-[120px] pointer-events-none" />
+
+                <div className="inline-flex items-center bg-teal-500/10 border border-teal-500/20 text-teal-400 px-6 py-2 rounded-full font-bold text-xs uppercase tracking-widest animate-fade-in">
+                    <Activity size={16} className="mr-2 animate-pulse" />
+                    AI-Powered Healthcare Safety
                 </div>
-                <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-gray-900 leading-tight">
-                    Your Personal Shield Against <br />
-                    <span className="text-primary bg-gradient-to-r from-blue-600 to-teal-400 bg-clip-text text-transparent">Medication Errors</span>
+
+                <h1 className="text-5xl md:text-8xl font-black tracking-tight text-gray-900 dark:text-white leading-[1.1] animate-slide-up">
+                    Your Personal Shield <br />
+                    <span className="bg-gradient-to-r from-teal-400 via-blue-400 to-purple-500 bg-clip-text text-transparent">Against Medication Errors</span>
                 </h1>
-                <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-                    Instantly analyze your prescriptions for dangerous interactions, dosage conflicts, and timing risks using our advanced AI-based awareness system.
+
+                <p className="text-lg md:text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto leading-relaxed animate-fade-in [animation-delay:200ms]">
+                    Smart reminders, risk analysis, and family medication safety management.
+                    Built with advanced AI to keep you and your loved ones secure.
                 </p>
-                <div className="flex flex-col sm:flex-row justify-center gap-4 mt-8">
-                    <Link to="/register" className="bg-primary hover:bg-blue-700 text-white text-lg px-8 py-4 rounded-full font-bold shadow-lg shadow-blue-500/30 transition-all flex items-center justify-center">
-                        Check My Meds Now <ArrowRight className="ml-2" />
+
+                <div className="flex flex-col sm:flex-row justify-center gap-5 mt-12 animate-fade-in [animation-delay:400ms]">
+                    <Link to="/register" className="btn-primary !px-10 !py-5 text-xl flex items-center justify-center gap-3">
+                        Get Started Free <ArrowRight className="group-hover:translate-x-1 transition-transform" />
                     </Link>
-                    <Link to="/login" className="bg-white hover:bg-gray-50 text-gray-700 text-lg px-8 py-4 rounded-full font-bold border border-gray-200 shadow-sm transition-all">
-                        Login to Dashboard
+                    <Link to="/login" className="btn-secondary !px-10 !py-5 text-xl flex items-center justify-center">
+                        View Dashboard
                     </Link>
                 </div>
             </section>
 
             {/* Features Grid */}
-            <section className="grid md:grid-cols-3 gap-8">
+            <section className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <FeatureCard
-                    icon={<ShieldCheck className="text-teal-500" size={40} />}
-                    title="Interaction Checker"
-                    description="Identify potential conflicts between multiple medications instantly."
+                    icon={<Bell className="text-blue-500" size={36} />}
+                    title="Smart Reminders"
+                    description="Set precise medication reminders with overdose detection, repeat scheduling, and live countdown timers."
+                    badge="New"
                 />
                 <FeatureCard
-                    icon={<Users className="text-blue-500" size={40} />}
+                    icon={<ShieldCheck className="text-teal-500" size={36} />}
+                    title="Interaction Checker"
+                    description="Identify potential conflicts between multiple medications instantly with AI-powered analysis."
+                />
+                <FeatureCard
+                    icon={<Users className="text-purple-500" size={36} />}
                     title="Family Profiles"
                     description="Manage medication safety for your parents, children, or dependents in one place."
                 />
                 <FeatureCard
-                    icon={<Activity className="text-purple-500" size={40} />}
+                    icon={<Activity className="text-pink-500" size={36} />}
                     title="Risk Analysis"
                     description="Get simple, easy-to-understand risk scores and awareness summaries."
                 />
             </section>
 
-            {/* Disclaimer Banner (Sticky or Prominent) */}
-            <section className="bg-amber-50 border-l-4 border-amber-500 p-6 rounded-r-lg shadow-sm">
+            {/* Disclaimer Banner */}
+            <section className="bg-amber-50 dark:bg-amber-900/20 border-l-4 border-amber-500 p-6 rounded-r-lg shadow-sm">
                 <div className="flex items-start">
-                    <AlertTriangle className="text-amber-600 min-w-[24px] mr-4 mt-1" />
+                    <AlertTriangle className="text-amber-600 dark:text-amber-400 min-w-[24px] mr-4 mt-1" />
                     <div>
-                        <h3 className="text-amber-800 font-bold text-lg mb-1">Medical Disclaimer</h3>
-                        <p className="text-amber-700 text-sm leading-relaxed">
+                        <h3 className="text-amber-800 dark:text-amber-300 font-bold text-lg mb-1">Medical Disclaimer</h3>
+                        <p className="text-amber-700 dark:text-amber-400 text-sm leading-relaxed">
                             This platform is an <strong>assistive tool only</strong> and does not provide medical advice, diagnosis, or treatment.
                             The risk analysis is generated by AI and may not be 100% accurate. Always consult your doctor or pharmacist
                             before making any changes to your medication regimen.
@@ -65,16 +77,24 @@ const Landing = () => {
     );
 };
 
-const FeatureCard = ({ icon, title, description }) => (
-    <div className="bg-white p-8 rounded-2xl shadow-soft card-hover border border-gray-100">
-        <div className="mb-4 bg-gray-50 w-16 h-16 rounded-2xl flex items-center justify-center">
-            {icon}
+const FeatureCard = ({ icon, title, description, badge }) => (
+    <div className="card-premium relative group h-full">
+        {badge && (
+            <span className="absolute top-4 right-4 bg-teal-500 text-black text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-tighter transition-transform group-hover:scale-110">
+                {badge}
+            </span>
+        )}
+        <div className="mb-6 bg-white/5 w-16 h-16 rounded-2xl flex items-center justify-center transition-all duration-300 group-hover:bg-teal-500/20 group-hover:scale-110 shadow-lg">
+            <div className="transition-transform duration-500 group-hover:rotate-[360deg] text-teal-400 group-hover:text-teal-300">
+                {icon}
+            </div>
         </div>
-        <h3 className="text-xl font-bold mb-3 text-gray-800">{title}</h3>
-        <p className="text-gray-600 leading-relaxed">
+        <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white group-hover:text-teal-400 transition-colors uppercase tracking-tight">{title}</h3>
+        <p className="text-gray-600 dark:text-gray-400 leading-relaxed text-sm group-hover:text-gray-900 dark:group-hover:text-gray-300">
             {description}
         </p>
     </div>
 );
 
 export default Landing;
+

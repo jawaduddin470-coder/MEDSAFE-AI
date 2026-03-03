@@ -12,7 +12,7 @@ if (!process.env.GEMINI_API_KEY) {
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({
-    model: "gemini-2.0-flash",
+    model: "gemini-1.5-flash",
     systemInstruction: `You are "MediSafe Assistant", a medication safety awareness assistant integrated into the MedTech platform.
 
 YOUR RESPONSIBILITIES:
@@ -70,9 +70,9 @@ const chatWithAI = async (req, res) => {
         console.error("AI Error:", error);
 
         // Check for specific Gemini errors if possible, otherwise generic
-        if (error.message && error.message.includes('429')) {
+        if (error.message && (error.message.includes('429') || error.message.includes('quota') || error.message.includes('Resource has been exhausted'))) {
             return res.status(429).json({
-                message: "I'm experiencing high demand right now. Please wait a moment and try again."
+                message: "The AI service is currently at maximum capacity (Quota exceeded). Please try again in 1 minute."
             });
         }
 

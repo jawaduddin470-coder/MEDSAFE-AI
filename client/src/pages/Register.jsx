@@ -23,10 +23,11 @@ const Register = () => {
     };
 
     return (
-        <div className="max-w-md mx-auto mt-10 bg-white p-8 rounded-2xl shadow-soft border border-gray-100">
-            <div className="text-center mb-8">
-                <h2 className="text-3xl font-bold text-gray-900">Get Started</h2>
-                <p className="text-gray-500 mt-2">Create your account to start managing risks</p>
+        <div className="max-w-md mx-auto mt-16 glass-card p-12 rounded-[2.5rem] border-white/5 relative overflow-hidden shadow-2xl">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-primary" />
+            <div className="text-center mb-10">
+                <h2 className="text-4xl font-black text-gray-900 dark:text-white tracking-tighter uppercase italic">Join <span className="text-teal-400">Medsafe</span></h2>
+                <p className="text-gray-500 font-bold uppercase tracking-[0.2em] text-[10px] mt-4">Initialize Health Protocol</p>
             </div>
 
             {error && (
@@ -36,14 +37,14 @@ const Register = () => {
             )}
 
             <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                <div className="space-y-1">
+                    <label className="block text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] ml-2">Full Identity</label>
                     <div className="relative">
-                        <User className="absolute left-3 top-3 text-gray-400" size={20} />
+                        <User className="absolute left-5 top-1/2 -translate-y-1/2 text-teal-500/40" size={18} />
                         <input
                             type="text"
                             required
-                            className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                            className="input-modern pl-14 pr-6 py-4"
                             placeholder="John Doe"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
@@ -51,29 +52,29 @@ const Register = () => {
                     </div>
                 </div>
 
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                <div className="space-y-1">
+                    <label className="block text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] ml-2">Email Address</label>
                     <div className="relative">
-                        <Mail className="absolute left-3 top-3 text-gray-400" size={20} />
+                        <Mail className="absolute left-5 top-1/2 -translate-y-1/2 text-teal-500/40" size={18} />
                         <input
                             type="email"
                             required
-                            className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
-                            placeholder="you@example.com"
+                            className="input-modern pl-14 pr-6 py-4"
+                            placeholder="user@example.com"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                         />
                     </div>
                 </div>
 
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                <div className="space-y-1">
+                    <label className="block text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] ml-2">Access Key</label>
                     <div className="relative">
-                        <Lock className="absolute left-3 top-3 text-gray-400" size={20} />
+                        <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-teal-500/40" size={18} />
                         <input
                             type="password"
                             required
-                            className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                            className="input-modern pl-14 pr-6 py-4"
                             placeholder="••••••••"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
@@ -83,16 +84,16 @@ const Register = () => {
 
                 <button
                     type="submit"
-                    className="w-full bg-primary hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow-lg shadow-blue-500/30 transition-all"
+                    className="w-full btn-primary !py-5 text-sm font-black uppercase tracking-[0.2em] mt-4"
                 >
-                    Create Account
+                    Create Identity
                 </button>
             </form>
 
-            <p className="text-center mt-6 text-gray-600">
-                Already have an account?{' '}
-                <Link to="/login" className="text-primary font-bold hover:underline">
-                    Sign in
+            <p className="text-center mt-8 text-[10px] font-bold text-gray-600 uppercase tracking-widest">
+                Already registered?{' '}
+                <Link to="/login" className="text-teal-400 hover:text-teal-300 transition-colors">
+                    Authenticate
                 </Link>
             </p>
         </div>

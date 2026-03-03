@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Trash2, User, Heart } from 'lucide-react';
+import { Plus, Trash2, User, Heart, Users, UserPlus } from 'lucide-react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 
@@ -56,119 +56,129 @@ const FamilyProfiles = () => {
     };
 
     return (
-        <div className="space-y-6">
+        <div className="max-w-4xl mx-auto space-y-10">
             <div className="flex justify-between items-center">
-                <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Family Profiles</h1>
-                    <p className="text-gray-600">Manage medication safety for your loved ones.</p>
-                </div>
+                <h1 className="text-4xl font-black text-gray-900 dark:text-white tracking-tight flex items-center gap-3 uppercase italic">
+                    <Users className="text-indigo-500" size={32} /> FAMILY HUB
+                </h1>
+            </div>
+
+            {/* Add Profile Section */}
+            <div className="glass-card p-10 rounded-[2rem] border-white/5 relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-teal-500/10 blur-[50px] rounded-full -translate-y-1/2 translate-x-1/2" />
+                <h2 className="text-xl font-black text-gray-900 dark:text-white mb-8 flex items-center gap-3">
+                    <UserPlus size={24} className="text-indigo-500" /> NEW MEMBER
+                </h2>
+                <p className="text-gray-600 dark:text-gray-400 mb-8 max-w-md">
+                    Add a new family member to manage their medication safety and health profiles.
+                </p>
                 <button
                     onClick={() => setShowModal(true)}
-                    className="btn-primary flex items-center"
+                    className="btn-primary flex items-center bg-teal-600 hover:bg-teal-700 text-white px-6 py-3 rounded-xl font-bold transition-all duration-300 transform hover:scale-105"
                 >
                     <Plus size={20} className="mr-2" />
                     Add Member
                 </button>
             </div>
 
-            {loading ? (
-                <div className="text-center py-10">Loading...</div>
-            ) : members.length === 0 ? (
-                <div className="text-center py-20 bg-gray-50 rounded-xl border-dashed border-2 border-gray-200">
-                    <Heart size={48} className="mx-auto text-gray-300 mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900">No family members yet</h3>
-                    <p className="text-gray-500 mb-6">Add a dependent to start tracking their safety.</p>
-                    <button
-                        onClick={() => setShowModal(true)}
-                        className="text-primary font-medium hover:underline"
-                    >
-                        Add your first member
-                    </button>
-                </div>
-            ) : (
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {members.map((member) => (
-                        <div key={member._id} className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 relative group hover:shadow-md transition-shadow">
-                            <button
-                                onClick={() => handleDelete(member._id)}
-                                className="absolute top-4 right-4 text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
-                            >
-                                <Trash2 size={18} />
-                            </button>
-                            <div className="flex items-center space-x-4 mb-4">
-                                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold text-lg">
-                                    {member.name.charAt(0)}
+            {/* Profiles List */}
+            <div className="grid md:grid-cols-2 gap-6">
+                {loading ? (
+                    <div className="md:col-span-2 flex justify-center p-20">
+                        <div className="w-10 h-10 border-4 border-teal-500/20 border-t-teal-500 rounded-full animate-spin" />
+                    </div>
+                ) : members.length === 0 ? (
+                    <div className="md:col-span-2 text-center py-20 glass-card rounded-[2rem] border-white/5 border-dashed">
+                        <p className="text-gray-500 font-medium italic text-lg mb-2">No profiles registered.</p>
+                        <p className="text-xs text-gray-600 uppercase tracking-widest">Connect with your loved ones above</p>
+                    </div>
+                ) : (
+                    members.map(member => (
+                        <div key={member._id} className="glass-card p-8 rounded-[2rem] border-white/5 relative overflow-hidden group transition-all duration-500 hover:bg-white/[0.07] hover:-translate-y-2 shadow-lg hover:shadow-2xl">
+                            <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-teal-500 to-transparent opacity-30" />
+                            <div className="flex justify-between items-start mb-6">
+                                <div className="w-16 h-16 rounded-2xl bg-teal-500/10 flex items-center justify-center text-teal-400 group-hover:scale-110 transition-transform duration-500">
+                                    <User size={32} />
                                 </div>
-                                <div>
-                                    <h3 className="font-bold text-lg text-gray-900">{member.name}</h3>
-                                    <p className="text-sm text-gray-500 capitalize">{member.relation} • {member.age} years</p>
-                                </div>
+                                <button
+                                    onClick={() => handleDelete(member._id)}
+                                    className="p-3 rounded-xl bg-red-500/5 text-red-500/40 hover:text-red-500 hover:bg-red-500/20 transition-all opacity-0 group-hover:opacity-100 border border-transparent hover:border-red-500/20"
+                                >
+                                    <Trash2 size={20} />
+                                </button>
                             </div>
-                            <div className="border-t border-gray-100 pt-4 mt-4">
-                                <div className="flex justify-between items-center text-sm">
-                                    <span className="text-gray-600">Medications</span>
-                                    <span className="font-medium bg-gray-100 px-2 py-1 rounded-md">
-                                        {member.medications?.length || 0} Active
-                                    </span>
+                            <h3 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight mb-2 group-hover:text-indigo-500 transition-colors uppercase">{member.name}</h3>
+                            <p className="text-gray-600 dark:text-gray-500 font-bold text-xs uppercase tracking-widest mb-4">AGE: {member.age} • STATUS: ACTIVE</p>
+
+                            {member.medications && member.medications.length > 0 && (
+                                <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-white/5">
+                                    {member.medications.map((medication, idx) => (
+                                        <span key={idx} className="bg-white/5 text-[10px] font-black text-teal-500/80 px-3 py-1 rounded-lg border border-white/10 uppercase tracking-tighter">
+                                            {medication.name}
+                                        </span>
+                                    ))}
                                 </div>
-                            </div>
+                            )}
                         </div>
-                    ))}
-                </div>
-            )}
+                    ))
+                )}
+            </div>
 
             {/* Modal */}
             {showModal && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-2xl w-full max-w-md p-6 animate-in fade-in zoom-in duration-200">
-                        <h2 className="text-xl font-bold mb-4">Add Family Member</h2>
-                        <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="fixed inset-0 bg-black/80 backdrop-blur-xl flex items-center justify-center z-50 p-4 animate-in fade-in duration-300">
+                    <div className="glass-card rounded-[2.5rem] w-full max-w-md p-10 border-white/10 relative overflow-hidden shadow-2xl">
+                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-primary" />
+                        <h2 className="text-3xl font-black text-gray-900 dark:text-white mb-6 tracking-tight uppercase">Add Member</h2>
+                        <form onSubmit={handleSubmit} className="space-y-6">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                                <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Name</label>
                                 <input
                                     type="text"
                                     required
-                                    className="input-field"
+                                    className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl px-5 py-4 text-gray-900 dark:text-white outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/20 transition-all"
+                                    placeholder="Enter full name"
                                     value={formData.name}
                                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                 />
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Relationship</label>
+                                    <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Relationship</label>
                                     <select
                                         required
-                                        className="input-field"
+                                        className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white outline-none focus:border-teal-500/50 transition-all appearance-none"
                                         value={formData.relation}
                                         onChange={(e) => setFormData({ ...formData, relation: e.target.value })}
                                     >
-                                        <option value="">Select...</option>
-                                        <option value="parent">Parent</option>
-                                        <option value="child">Child</option>
-                                        <option value="spouse">Spouse</option>
-                                        <option value="other">Other</option>
+                                        <option value="" className="bg-gray-900">Select...</option>
+                                        <option value="parent" className="bg-gray-900">Parent</option>
+                                        <option value="child" className="bg-gray-900">Child</option>
+                                        <option value="spouse" className="bg-gray-900">Spouse</option>
+                                        <option value="other" className="bg-gray-900">Other</option>
                                     </select>
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Age</label>
+                                    <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Age</label>
                                     <input
                                         type="number"
-                                        className="input-field"
+                                        className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white outline-none focus:border-teal-500/50 transition-all"
+                                        placeholder="Age"
                                         value={formData.age}
                                         onChange={(e) => setFormData({ ...formData, age: e.target.value })}
                                     />
                                 </div>
                             </div>
-                            <div className="flex justify-end gap-3 mt-6">
+                            <div className="flex flex-col gap-3 mt-8">
+                                <button type="submit" className="btn-primary w-full !py-4 text-sm font-black uppercase tracking-widest">
+                                    Save Profile
+                                </button>
                                 <button
                                     type="button"
                                     onClick={() => setShowModal(false)}
-                                    className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
+                                    className="w-full py-4 text-gray-500 font-bold hover:text-white transition-colors uppercase text-[10px] tracking-[0.2em]"
                                 >
                                     Cancel
-                                </button>
-                                <button type="submit" className="btn-primary">
-                                    Save Profile
                                 </button>
                             </div>
                         </form>
