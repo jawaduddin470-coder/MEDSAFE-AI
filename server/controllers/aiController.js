@@ -13,7 +13,7 @@ if (!process.env.GEMINI_API_KEY) {
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({
     model: "gemini-1.5-flash",
-    systemInstruction: `You are "MediSafe Assistant", a medication safety awareness assistant integrated into the MedTech platform.
+    systemInstruction: `You are "MedSuree Assistant", a medication safety awareness assistant integrated into the MedSuree platform.
 
 YOUR RESPONSIBILITIES:
 1. Explain medication risk analysis results in plain, non-technical language.

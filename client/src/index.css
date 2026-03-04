@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -47,15 +47,25 @@
 
   /* Light Mode (Default) */
   body {
-    @apply bg-gray-50 text-gray-900 font-body antialiased selection:bg-indigo-500/30 transition-colors duration-500;
-    background-image: radial-gradient(circle at 50% -20%, #6366f110 0%, #ffffff 60%);
+    @apply bg-gray-50 text-gray-900 antialiased selection:bg-indigo-500/30 transition-colors duration-500;
+    font-family: 'Outfit', 'Inter', sans-serif;
+    background-color: #f8fafc;
+    background-image:
+      radial-gradient(at 0% 0%, hsla(253, 16%, 7%, 0.05) 0, transparent 50%),
+      radial-gradient(at 50% 0%, hsla(225, 39%, 30%, 0.05) 0, transparent 50%),
+      radial-gradient(at 100% 0%, hsla(339, 49%, 30%, 0.05) 0, transparent 50%);
     background-attachment: fixed;
   }
 
   /* Dark Mode Override */
   .dark body {
-    @apply bg-[#0a0e1a] text-gray-100;
-    background-image: radial-gradient(circle at 50% -20%, #1e3a8a30 0%, #0a0e1a 60%);
+    @apply text-gray-100 antialiased selection:bg-indigo-500/30 transition-colors duration-500;
+    background-color: #0b0f19;
+    background-image:
+      radial-gradient(at 40% 20%, hsla(228, 100%, 74%, 0.15) 0px, transparent 50%),
+      radial-gradient(at 80% 0%, hsla(189, 100%, 56%, 0.15) 0px, transparent 50%),
+      radial-gradient(at 0% 50%, hsla(355, 100%, 93%, 0.05) 0px, transparent 50%);
+    background-attachment: fixed;
   }
 
   h1,
@@ -85,9 +95,10 @@
 
   /* Glassmorphism Cards */
   .glass-card {
-    @apply backdrop-blur-xl shadow-2xl transition-all duration-500;
-    background: rgba(255, 255, 255, 0.7);
-    border: 1px solid rgba(0, 0, 0, 0.05);
+    @apply backdrop-blur-2xl shadow-2xl transition-all duration-500;
+    background: rgba(255, 255, 255, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
   }
 
   .dark .glass-card {
@@ -113,11 +124,11 @@
 
   /* Secondary Button */
   .btn-secondary {
-    @apply px-6 py-3 rounded-xl font-semibold text-gray-300 bg-white/5 border border-white/10 backdrop-blur-sm transition-all duration-300;
+    @apply px-6 py-3 rounded-xl font-semibold text-gray-700 dark:text-gray-300 bg-white/50 dark:bg-white/5 border border-gray-200 dark:border-white/10 backdrop-blur-md transition-all duration-300 shadow-sm;
   }
 
   .btn-secondary:hover {
-    @apply bg-white/10 text-white border-teal-500/30 scale-[1.02];
+    @apply bg-white dark:bg-white/10 text-gray-900 dark:text-white border-teal-500/30 scale-[1.02] shadow-md;
   }
 
   /* Advanced Card Hover */
@@ -132,12 +143,28 @@
 
   /* Modern Input */
   .input-modern {
-    @apply w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-800 backdrop-blur-sm transition-all duration-200 outline-none;
+    @apply w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 backdrop-blur-sm transition-all duration-200 outline-none;
     @apply focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500/40;
   }
 
   .dark .input-modern {
-    @apply bg-gray-900/50 border-gray-700/50 text-white focus:ring-teal-500/40 focus:border-teal-500/50;
+    @apply bg-gray-800/80 border-gray-700/50 text-white focus:ring-teal-500/40 focus:border-teal-500/50;
+  }
+
+  /* Select inputs have issues with background color on dark mode dropdowns */
+  .dark select.input-modern option,
+  .dark select.input-field option {
+    @apply bg-gray-900 text-white;
+  }
+
+  /* Standard Input Field (used across Login/Register/Modals) */
+  .input-field {
+    @apply w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 transition-all duration-200 outline-none;
+    @apply focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500/40;
+  }
+
+  .dark .input-field {
+    @apply bg-gray-800/80 border-gray-700/50 text-white focus:ring-indigo-500/40 focus:border-indigo-500/50;
   }
 
   /* Nav Links (Glowing transition) */
@@ -285,5 +312,46 @@
 
   .hover-bounce-icon:hover {
     animation: bounceIcon 0.6s ease-in-out infinite;
+  }
+
+  /* Custom Alert Animations */
+  @keyframes bounceIn {
+    0% {
+      opacity: 0;
+      transform: scale(0.8) translateY(-20px);
+    }
+
+    50% {
+      opacity: 1;
+      transform: scale(1.05) translateY(0);
+    }
+
+    100% {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  @keyframes highlightPulse {
+    0% {
+      box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+    }
+
+    50% {
+      box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+    }
+
+    100% {
+      box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+    }
+  }
+
+  .animate-bounce-in {
+    animation: bounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  }
+
+  .animate-highlight {
+    animation: highlightPulse 2s infinite;
+    @apply border-red-500/50 bg-red-500/5;
   }
 }

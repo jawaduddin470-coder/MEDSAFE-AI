@@ -26,7 +26,7 @@ const Register = () => {
         <div className="max-w-md mx-auto mt-16 glass-card p-12 rounded-[2.5rem] border-white/5 relative overflow-hidden shadow-2xl">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-primary" />
             <div className="text-center mb-10">
-                <h2 className="text-4xl font-black text-gray-900 dark:text-white tracking-tighter uppercase italic">Join <span className="text-teal-400">Medsafe</span></h2>
+                <h2 className="text-4xl font-black text-gray-900 dark:text-white tracking-tighter uppercase italic">Join <span className="text-teal-400">MedSuree</span></h2>
                 <p className="text-gray-500 font-bold uppercase tracking-[0.2em] text-[10px] mt-4">Initialize Health Protocol</p>
             </div>
 

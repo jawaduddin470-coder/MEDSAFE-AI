@@ -23,7 +23,7 @@ export function sendNotification(title, body) {
             body,
             icon: '/icons/icon-192.png',
             badge: '/icons/icon-72.png',
-            tag: 'medsafe-reminder',
+            tag: 'medsuree-reminder',
             requireInteraction: true,
         });
 

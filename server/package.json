@@ -1,7 +1,7 @@
 {
-    "name": "medtech-server",
+    "name": "medsuree-server",
     "version": "1.0.0",
-    "description": "MedTech API",
+    "description": "MedSuree API",
     "main": "index.js",
     "scripts": {
         "start": "node index.js",

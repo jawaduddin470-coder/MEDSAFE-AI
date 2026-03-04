@@ -26,7 +26,7 @@ const Layout = ({ children }) => {
                         <div className="max-w-xs">
                             <div className="flex items-center gap-2 mb-4">
                                 <div className="w-8 h-8 bg-gradient-to-br from-teal-400 to-blue-600 rounded-lg shadow-lg shadow-teal-500/20" />
-                                <span className="text-2xl font-bold bg-gradient-to-r from-teal-400 to-blue-500 bg-clip-text text-transparent">MedSafe AI</span>
+                                <span className="text-2xl font-bold bg-gradient-to-r from-teal-400 to-blue-500 bg-clip-text text-transparent">MedSuree</span>
                             </div>
                             <p className="text-gray-400 text-sm leading-relaxed">
                                 Empowering health with AI-driven medication safety and smart awareness. Your trusted companion for medical safety.
@@ -71,7 +71,7 @@ const Layout = ({ children }) => {
                     {/* Bottom disclaimer */}
                     <div className="mt-12 pt-8 border-t border-white/5 text-center">
                         <p className="text-xs text-gray-500 uppercase tracking-widest mb-2 font-medium">
-                            © 2026 MedSafe AI — Developed for Safety Awareness
+                            © 2026 MedSuree — Smart Medication Safety & Reminders
                         </p>
                         <p className="text-[10px] text-gray-600 max-w-2xl mx-auto italic">
                             Disclaimer: This platform is an assistive tool only and does not provide medical advice.

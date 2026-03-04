@@ -1,6 +1,6 @@
 {
-  "name": "Medsafe AI – Smart Medication Reminder",
-  "short_name": "MedsafeAI",
+  "name": "MedSuree – Smart Medication Reminder",
+  "short_name": "MedSuree",
   "description": "A smart medication adherence app with reminders, safety checks, and AI-powered risk analysis.",
   "start_url": "/",
   "display": "standalone",

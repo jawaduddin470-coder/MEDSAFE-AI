@@ -15,9 +15,11 @@ import MedicationList from './pages/MedicationList';
 import RiskAnalysis from './pages/RiskAnalysis';
 import FamilyProfiles from './pages/FamilyProfiles';
 import About from './pages/About';
+import Pricing from './pages/Pricing';
 import Reminders from './pages/Reminders';
 import ProtectedRoute from './components/ProtectedRoute';
-import MediSafeAssistant from './components/MediSafeAssistant.jsx';
+import MedSureeAssistant from './components/MedSureeAssistant.jsx';
+import MedSureeReminderBanner from './components/MedSureeReminderBanner.jsx';
 import PageTransition from './components/PageTransition';
 
 function App() {
@@ -46,7 +48,7 @@ function App() {
             <div className="flex h-screen items-center justify-center">
                 <div className="flex flex-col items-center gap-3">
                     <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-                    <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">Loading Medsafe AI…</p>
+                    <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">Loading MedSuree…</p>
                 </div>
             </div>
         );
@@ -60,6 +62,7 @@ function App() {
                         <Routes>
                             <Route path="/" element={<Landing />} />
                             <Route path="/about" element={<About />} />
+                            <Route path="/pricing" element={<Pricing />} />
                             <Route path="/login" element={<Login />} />
                             <Route path="/register" element={<Register />} />
 
@@ -74,7 +77,8 @@ function App() {
                         </Routes>
                     </PageTransition>
                 </Layout>
-                <MediSafeAssistant />
+                <MedSureeAssistant />
+                <MedSureeReminderBanner />
             </Router>
         </ReminderProvider>
     );

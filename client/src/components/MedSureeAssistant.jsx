@@ -2,12 +2,12 @@ import React, { useState, useRef, useEffect } from 'react';
 import { MessageCircle, X, Send, Bot, User, Loader2, AlertTriangle } from 'lucide-react';
 import axios from 'axios';
 
-const MediSafeAssistant = () => {
+const MedSureeAssistant = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState([
         {
             role: 'assistant',
-            content: 'Hello! I am MediSafe Assistant. I can help you understand medication safety, explain risk reports, or navigate the app. How can I help you today?',
+            content: 'Hello! I am MedSuree Assistant. I can help you understand medication safety, explain risk reports, or navigate the app. How can I help you today?',
         },
     ]);
     const [inputText, setInputText] = useState('');
@@ -51,7 +51,7 @@ const MediSafeAssistant = () => {
             const response = await axios.post('/api/ai/chat', {
                 message: currentInput,
                 history: validHistory
-            });
+            }, { timeout: 15000 }); // 15 second timeout
 
             if (response.data && response.data.response) { // Added check for response data
                 setMessages(prev => [...prev, { role: 'assistant', content: response.data.response }]);
@@ -85,7 +85,7 @@ const MediSafeAssistant = () => {
                                 <Bot size={20} className="text-white" />
                             </div>
                             <div>
-                                <h3 className="font-bold text-sm">MediSafe Assistant</h3>
+                                <h3 className="font-bold text-sm">MedSuree Assistant</h3>
                                 <p className="text-xs text-blue-100 flex items-center gap-1">
                                     <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
                                     Safety Awareness
@@ -141,13 +141,13 @@ const MediSafeAssistant = () => {
 
                         {isLoading && (
                             <div className="flex gap-3 justify-start">
-                                <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center shrink-0 border border-blue-200">
+                                <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center shrink-0 border border-blue-200 mt-1">
                                     <Bot size={16} className="text-blue-600" />
                                 </div>
-                                <div className="bg-white dark:bg-gray-700 px-4 py-3 rounded-2xl rounded-bl-none border border-gray-100 dark:border-gray-600 shadow-sm flex items-center gap-1">
-                                    <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
-                                    <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
-                                    <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></span>
+                                <div className="bg-white dark:bg-gray-700 px-4 py-3 rounded-2xl rounded-bl-none border border-gray-100 dark:border-gray-600 shadow-sm flex items-center gap-1 min-h-[40px]">
+                                    <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+                                    <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+                                    <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
                                 </div>
                             </div>
                         )}
@@ -193,7 +193,7 @@ const MediSafeAssistant = () => {
                     <>
                         <MessageCircle size={24} className="animate-bounce-subtle" />
                         <span className="font-semibold pr-1 hidden group-hover:block animate-in slide-in-from-right-2 fade-in duration-300 text-sm">
-                            MediSafe Assistant
+                            MedSuree Assistant
                         </span>
                     </>
                 )}
@@ -202,4 +202,4 @@ const MediSafeAssistant = () => {
     );
 };
 
-export default MediSafeAssistant;
+export default MedSureeAssistant;

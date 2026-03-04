@@ -24,8 +24,12 @@ const reminderSchema = mongoose.Schema(
         },
         repeat: {
             type: String,
-            enum: ['none', 'daily', 'weekly'],
+            enum: ['none', 'daily', 'weekly', 'custom'],
             default: 'none',
+        },
+        intervalDays: {
+            type: Number,
+            default: null,
         },
         status: {
             type: String,

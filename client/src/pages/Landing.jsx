@@ -4,31 +4,31 @@ import { ShieldCheck, Activity, Users, AlertTriangle, ArrowRight, Bell } from 'l
 
 const Landing = () => {
     return (
-        <div className="space-y-20">
+        <div className="space-y-24 pb-20">
             {/* Hero Section */}
-            <section className="text-center space-y-10 py-16 md:py-28 relative overflow-hidden">
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-teal-500/5 blur-[120px] pointer-events-none" />
+            <section className="text-center space-y-10 py-16 md:py-32 relative overflow-hidden flex flex-col items-center justify-center min-h-[85vh]">
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 bg-teal-500/10 blur-[150px] pointer-events-none rounded-full" />
+                <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-indigo-500/10 blur-[120px] pointer-events-none rounded-full" />
 
-                <div className="inline-flex items-center bg-teal-500/10 border border-teal-500/20 text-teal-400 px-6 py-2 rounded-full font-bold text-xs uppercase tracking-widest animate-fade-in">
+                <div className="relative z-10 inline-flex items-center bg-white/40 dark:bg-teal-500/10 border border-teal-500/20 text-teal-600 dark:text-teal-400 px-6 py-2.5 rounded-full font-bold text-xs uppercase tracking-widest backdrop-blur-md animate-slide-up shadow-sm">
                     <Activity size={16} className="mr-2 animate-pulse" />
                     AI-Powered Healthcare Safety
                 </div>
 
-                <h1 className="text-5xl md:text-8xl font-black tracking-tight text-gray-900 dark:text-white leading-[1.1] animate-slide-up">
-                    Your Personal Shield <br />
-                    <span className="bg-gradient-to-r from-teal-400 via-blue-400 to-purple-500 bg-clip-text text-transparent">Against Medication Errors</span>
+                <h1 className="relative z-10 text-6xl md:text-8xl lg:text-[7rem] font-black tracking-tighter text-gray-900 dark:text-white leading-[1.05] animate-slide-up [animation-delay:100ms] drop-shadow-sm">
+                    Your Shield <br />
+                    <span className="bg-gradient-to-r from-indigo-500 via-purple-500 to-teal-400 bg-clip-text text-transparent drop-shadow-sm">Against Errors.</span>
                 </h1>
 
-                <p className="text-lg md:text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto leading-relaxed animate-fade-in [animation-delay:200ms]">
-                    Smart reminders, risk analysis, and family medication safety management.
-                    Built with advanced AI to keep you and your loved ones secure.
+                <p className="relative z-10 text-lg md:text-2xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed animate-fade-in [animation-delay:300ms] font-medium">
+                    Smart reminders, AI risk analysis, and family medication safety management in one beautiful platform.
                 </p>
 
-                <div className="flex flex-col sm:flex-row justify-center gap-5 mt-12 animate-fade-in [animation-delay:400ms]">
-                    <Link to="/register" className="btn-primary !px-10 !py-5 text-xl flex items-center justify-center gap-3">
+                <div className="relative z-10 flex flex-col sm:flex-row justify-center gap-5 mt-12 animate-fade-in [animation-delay:500ms]">
+                    <Link to="/register" className="btn-primary !px-10 !py-4 text-lg md:text-xl flex items-center justify-center gap-3 shadow-xl shadow-indigo-500/20">
                         Get Started Free <ArrowRight className="group-hover:translate-x-1 transition-transform" />
                     </Link>
-                    <Link to="/login" className="btn-secondary !px-10 !py-5 text-xl flex items-center justify-center">
+                    <Link to="/login" className="btn-secondary !px-10 !py-4 text-lg md:text-xl flex items-center justify-center">
                         View Dashboard
                     </Link>
                 </div>

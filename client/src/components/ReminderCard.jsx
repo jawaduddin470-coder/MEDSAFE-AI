@@ -64,6 +64,18 @@ const ReminderCard = ({ reminder, onDelete, onEdit }) => {
     const status = getStatus(reminder);
     const cfg = STATUS_CONFIG[status];
     const countdown = useCountdown(reminder);
+    const [isAppAlerting, setIsAppAlerting] = useState(false);
+
+    useEffect(() => {
+        const handleAlert = (e) => {
+            if (e.detail?.id === reminder.id) {
+                setIsAppAlerting(true);
+                setTimeout(() => setIsAppAlerting(false), 10000);
+            }
+        };
+        window.addEventListener('medsuree-reminder-alert', handleAlert);
+        return () => window.removeEventListener('medsuree-reminder-alert', handleAlert);
+    }, [reminder.id]);
 
     const repeatLabel =
         reminder.repeat === 'custom'
@@ -88,6 +100,7 @@ const ReminderCard = ({ reminder, onDelete, onEdit }) => {
             className={`group glass-card rounded-[2.5rem] border-white/5 transition-all duration-500
         hover:bg-white/[0.07] hover:-translate-y-1 animate-fadeIn overflow-hidden relative shadow-lg hover:shadow-2xl
         ${status === 'missed' ? 'border-red-500/20' : ''}
+        ${isAppAlerting ? 'animate-highlight' : ''}
       `}
         >
             {/* Hover border flash */}

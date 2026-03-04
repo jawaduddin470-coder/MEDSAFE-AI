@@ -75,7 +75,7 @@ const Login = () => {
             </form>
 
             <p className="text-center mt-8 text-[10px] font-bold text-gray-600 uppercase tracking-widest">
-                New to Medsafe?{' '}
+                New to MedSuree?{' '}
                 <Link to="/register" className="text-teal-400 hover:text-teal-300 transition-colors">
                     Initialize Account
                 </Link>

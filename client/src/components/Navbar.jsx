@@ -28,6 +28,7 @@ const Navbar = () => {
 
     const navLinks = [
         { name: 'Home', path: '/' },
+        { name: 'Pricing', path: '/pricing' },
         { name: 'About', path: '/about' },
         ...(user ? [
             { name: 'Dashboard', path: '/dashboard' },
@@ -54,7 +55,7 @@ const Navbar = () => {
                             <ShieldAlert size={32} className="text-indigo-600 dark:text-indigo-400 relative z-10" />
                         </div>
                         <span className="text-xl font-bold tracking-tight text-gray-900 dark:text-white uppercase italic">
-                            MedSafe<span className="bg-gradient-to-r from-indigo-500 to-blue-600 bg-clip-text text-transparent">AI</span>
+                            Med<span className="bg-gradient-to-r from-indigo-500 to-blue-600 bg-clip-text text-transparent">Suree</span>
                         </span>
                     </Link>
 

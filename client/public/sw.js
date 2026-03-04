@@ -1,5 +1,5 @@
-// ─── Medsafe AI Service Worker ───────────────────────────────────────────────
-const CACHE_NAME = 'medsafe-v1';
+// ─── MedSuree Service Worker ───────────────────────────────────────────────
+const CACHE_NAME = 'medsuree-v1';
 const ASSETS_TO_CACHE = [
     '/',
     '/index.html',
@@ -57,7 +57,7 @@ self.addEventListener('push', (event) => {
         body: data.body || 'Time to take your medication!',
         icon: '/icons/icon-192.png',
         badge: '/icons/icon-72.png',
-        tag: 'medsafe-push',
+        tag: 'medsuree-push',
         requireInteraction: true,
         data: { url: data.url || '/reminders' },
     };

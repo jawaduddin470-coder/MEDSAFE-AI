@@ -1,4 +1,4 @@
-# MedSafe AI - AI-Based Medication Error & Risk Awareness System
+# MedSuree - AI-Based Medication Error & Risk Awareness System
 
 A professional MedTech platform designed to prevent medication errors through AI-powered risk analysis, family profiles, and modern UX design.
 
@@ -53,7 +53,7 @@ A professional MedTech platform designed to prevent medication errors through AI
    - **Build Command**: `npm run build`
    - **Output Directory**: `dist`
 3. **Environment Variables**:
-   - `VITE_API_URL`: The URL of your **hosted Render backend** (e.g., `https://medsafe-api.onrender.com`).
+   - `VITE_API_URL`: The URL of your **hosted Render backend** (e.g., `https://medsuree-api.onrender.com`).
 
 ---
 
@@ -66,4 +66,4 @@ A professional MedTech platform designed to prevent medication errors through AI
 ---
 
 ## ⚠️ Disclaimer
-MedSafe AI is an assistive tool for educational awareness only. It does NOT provide medical diagnosis or treatment. Always consult a healthcare professional.
+MedSuree is an assistive tool for educational awareness only. It does NOT provide medical diagnosis or treatment. Always consult a healthcare professional.

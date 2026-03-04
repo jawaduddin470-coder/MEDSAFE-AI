@@ -141,7 +141,7 @@ const ReminderForm = () => {
                             onChange={handleChange}
                             placeholder="e.g. Aspirin"
                             required
-                            className="w-full bg-white/5 border border-white/10 rounded-2xl pl-14 pr-6 py-4 text-white outline-none focus:border-teal-500/50 focus:ring-4 focus:ring-teal-500/5 transition-all font-medium"
+                            className="input-modern pl-14 font-medium"
                         />
                     </div>
                 </div>
@@ -157,7 +157,7 @@ const ReminderForm = () => {
                         value={form.dosage}
                         onChange={handleChange}
                         placeholder="e.g. 500mg"
-                        className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white outline-none focus:border-teal-500/50 transition-all font-medium"
+                        className="input-modern font-medium"
                     />
                 </div>
 
@@ -201,7 +201,7 @@ const ReminderForm = () => {
                         name="repeat"
                         value={form.repeat}
                         onChange={handleChange}
-                        className="input-field"
+                        className="input-modern"
                     >
                         {REPEAT_OPTIONS.map((opt) => (
                             <option key={opt.value} value={opt.value}>{opt.label}</option>

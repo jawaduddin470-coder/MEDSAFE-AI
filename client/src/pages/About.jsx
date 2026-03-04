@@ -5,19 +5,19 @@ const About = () => {
     return (
         <div className="max-w-6xl mx-auto space-y-20 pb-20 animate-fadeIn">
             {/* ── Hero Section ────────────────────────────── */}
-            <section className="relative py-20 text-center overflow-hidden">
-                <div className="absolute inset-0 -z-10 bg-gradient-to-b from-indigo-500/5 to-transparent dark:from-indigo-500/10" />
-                <div className="space-y-4 relative z-10">
-                    <p className="text-sm font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-[0.5em] animate-pulse-slow">
+            <section className="relative py-24 text-center overflow-hidden flex flex-col items-center justify-center">
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-indigo-500/10 dark:bg-indigo-500/20 rounded-full blur-[100px] pointer-events-none" />
+                <div className="space-y-6 relative z-10 max-w-4xl mx-auto px-4">
+                    <div className="inline-flex items-center bg-indigo-500/10 border border-indigo-500/20 text-indigo-600 dark:text-indigo-400 px-6 py-2 rounded-full font-bold text-xs uppercase tracking-[0.3em] animate-fade-in backdrop-blur-md">
+                        <Sparkles size={16} className="mr-2" />
                         Pioneering Healthcare Safety
-                    </p>
-                    <h1 className="text-6xl md:text-8xl font-black text-gray-900 dark:text-white tracking-tighter uppercase italic">
-                        The <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-blue-500 dark:from-indigo-400 dark:to-cyan-400">Mission</span>
+                    </div>
+                    <h1 className="text-6xl md:text-8xl font-black text-gray-900 dark:text-white tracking-tighter uppercase italic drop-shadow-sm">
+                        The <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-500 to-teal-400 dark:from-indigo-400 dark:via-purple-400 dark:to-teal-300">Mission</span>
                     </h1>
                 </div>
-                <div className="max-w-2xl mx-auto mt-8 px-4">
-                    <div className="h-1 w-24 bg-gradient-to-r from-indigo-600 to-blue-500 mx-auto rounded-full mb-8" />
-                    <p className="text-xl text-gray-600 dark:text-gray-400 font-medium leading-relaxed italic">
+                <div className="max-w-3xl mx-auto mt-12 px-4 relative z-10">
+                    <p className="text-2xl text-gray-600 dark:text-gray-300 font-medium leading-relaxed italic border-l-4 border-indigo-500 pl-6 text-left bg-white/50 dark:bg-white/5 p-6 rounded-r-2xl backdrop-blur-sm shadow-sm">
                         "Engineering a world where medication errors are history through artificial intelligence and proactive safety ecosystems."
                     </p>
                 </div>
@@ -53,17 +53,17 @@ const About = () => {
                                     href="https://merajuddin.lovable.app"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="btn-primary !py-2 !px-4 text-xs inline-block"
+                                    className="btn-primary !px-6 !py-3 text-sm flex items-center gap-2 shadow-lg shadow-indigo-500/30"
                                 >
-                                    VIEW PORTFOLIO
+                                    <Rocket size={16} /> VIEW PORTFOLIO
                                 </a>
                                 <a
                                     href="https://github.com/jawaduddin470-coder-github"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="btn-secondary !py-2 !px-4 text-xs flex items-center gap-2 inline-block"
+                                    className="btn-secondary !px-6 !py-3 text-sm flex items-center gap-2"
                                 >
-                                    <Github size={14} /> GITHUB
+                                    <Github size={16} /> GITHUB
                                 </a>
                             </div>
                         </div>
@@ -71,7 +71,7 @@ const About = () => {
                         <div className="lg:col-span-7 space-y-6 text-lg text-gray-700 dark:text-gray-300 font-medium leading-relaxed">
                             <p className="first-letter:text-5xl first-letter:font-black first-letter:text-indigo-600 first-letter:mr-3 first-letter:float-left">
                                 Dedication to engineering digital solutions that solve critical human problems is at the core of my work.
-                                Medsafe AI is my flagship project, born from a desire to merge healthcare safety with cutting-edge software engineering.
+                                MedSuree is my flagship project, born from a desire to merge healthcare safety with cutting-edge software engineering.
                             </p>
                             <p className="bg-white/50 dark:bg-white/5 p-6 rounded-2xl border border-gray-100 dark:border-white/5 backdrop-blur-sm shadow-sm italic">
                                 "This platform represents a journey of intense learning—from mastering the fundamentals to implementing production-grade architectures like Firebase Cloud Messaging and AI-driven analysis."
@@ -89,7 +89,7 @@ const About = () => {
                     </div>
                     <h3 className="text-2xl font-black text-gray-900 dark:text-white mb-6 uppercase italic tracking-tight">The Platform</h3>
                     <p className="text-gray-700 dark:text-gray-400 font-medium leading-relaxed mb-6">
-                        <span className="text-indigo-600 dark:text-white font-black tracking-widest uppercase text-xs">Medsafe AI</span> is more than just a reminder app.
+                        <span className="text-indigo-600 dark:text-white font-black tracking-widest uppercase text-xs">MedSuree</span> is more than just a reminder app.
                         It's a comprehensive safety ecosystem designed to audit medication regimens for lethal interactions and dosage conflicts.
                     </p>
                     <p className="text-gray-600 dark:text-gray-500 text-sm font-semibold uppercase tracking-widest flex items-center gap-2">

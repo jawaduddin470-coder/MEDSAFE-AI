@@ -38,7 +38,7 @@ require('./utils/scheduler');
 
 // Root endpoint
 app.get('/', (req, res) => {
-    res.send('MedTech API is running...');
+    res.send('MedSuree API is running...');
 });
 
 app.get('/api/health', (req, res) => {

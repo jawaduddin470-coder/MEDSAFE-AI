@@ -60,8 +60,11 @@ function triggerReminder(id) {
             reminder.dosage ? `Dosage: ${reminder.dosage}` : 'Your medication reminder is due.'
         );
     } else {
-        // Fallback alert if notifications are blocked
-        alert(`💊 MEDSAFE REMINDER: Time to take ${reminder.medicineName}${reminder.dosage ? ` (${reminder.dosage})` : ''}`);
+        // Fallback alert using CustomEvent for our Banner component
+        const event = new CustomEvent('medsuree-reminder-alert', {
+            detail: reminder
+        });
+        window.dispatchEvent(event);
     }
 
     onFire();
