@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
+const path = require('path');
 
 // Load env vars
 dotenv.config();
@@ -36,10 +37,18 @@ app.use('/api/reminders', require('./routes/reminderRoutes'));
 // Initialize Backend Scheduler
 require('./utils/scheduler');
 
-// Root endpoint
-app.get('/', (req, res) => {
-    res.send('MedSuree API is running...');
-});
+// Root endpoint / Serve frontend
+if (process.env.NODE_ENV === 'production') {
+    app.use(express.static(path.join(__dirname, '../client/dist')));
+
+    app.get('*', (req, res) => {
+        res.sendFile(path.resolve(__dirname, '../client/dist', 'index.html'));
+    });
+} else {
+    app.get('/', (req, res) => {
+        res.send('MedSuree API is running in development...');
+    });
+}
 
 app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', timestamp: new Date() });
