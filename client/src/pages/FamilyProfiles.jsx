@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Trash2, User, Heart, Users, UserPlus } from 'lucide-react';
+import { Plus, Trash2, User, Heart, Users, UserPlus, ShieldPlus, ChevronRight } from 'lucide-react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
+
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5001';
 
 const FamilyProfiles = () => {
+    const { t } = useLanguage();
     const [members, setMembers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
@@ -23,7 +27,7 @@ const FamilyProfiles = () => {
 
     const fetchMembers = async () => {
         try {
-            const res = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/family`, config);
+            const res = await axios.get(`${API_BASE}/api/family`, config);
             setMembers(res.data);
             setLoading(false);
         } catch (error) {
@@ -35,7 +39,7 @@ const FamilyProfiles = () => {
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to remove this profile?')) {
             try {
-                await axios.delete(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/family/${id}`, config);
+                await axios.delete(`${API_BASE}/api/family/${id}`, config);
                 setMembers(members.filter((member) => member._id !== id));
             } catch (error) {
                 console.error(error);
@@ -46,7 +50,7 @@ const FamilyProfiles = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api/family`, formData, config);
+            const res = await axios.post(`${API_BASE}/api/family`, formData, config);
             setMembers([...members, res.data]);
             setShowModal(false);
             setFormData({ name: '', relation: '', age: '' });
@@ -56,69 +60,98 @@ const FamilyProfiles = () => {
     };
 
     return (
-        <div className="max-w-4xl mx-auto space-y-10">
-            <div className="flex justify-between items-center">
-                <h1 className="text-4xl font-black text-gray-900 dark:text-white tracking-tight flex items-center gap-3 uppercase italic">
-                    <Users className="text-indigo-500" size={32} /> FAMILY HUB
-                </h1>
-            </div>
+        <div className="max-w-6xl mx-auto space-y-12 pb-24">
+            {/* Hero Header */}
+            <div className="relative py-12 px-10 rounded-[3rem] overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/10 via-purple-600/10 to-teal-400/10 backdrop-blur-3xl -z-10" />
+                <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/20 blur-[100px] -z-10 animate-pulse" />
 
-            {/* Add Profile Section */}
-            <div className="glass-card p-10 rounded-[2rem] border-white/5 relative overflow-hidden group">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-teal-500/10 blur-[50px] rounded-full -translate-y-1/2 translate-x-1/2" />
-                <h2 className="text-xl font-black text-gray-900 dark:text-white mb-8 flex items-center gap-3">
-                    <UserPlus size={24} className="text-indigo-500" /> NEW MEMBER
-                </h2>
-                <p className="text-gray-600 dark:text-gray-400 mb-8 max-w-md">
-                    Add a new family member to manage their medication safety and health profiles.
-                </p>
-                <button
-                    onClick={() => setShowModal(true)}
-                    className="btn-primary flex items-center bg-teal-600 hover:bg-teal-700 text-white px-6 py-3 rounded-xl font-bold transition-all duration-300 transform hover:scale-105"
-                >
-                    <Plus size={20} className="mr-2" />
-                    Add Member
-                </button>
-            </div>
-
-            {/* Profiles List */}
-            <div className="grid md:grid-cols-2 gap-6">
-                {loading ? (
-                    <div className="md:col-span-2 flex justify-center p-20">
-                        <div className="w-10 h-10 border-4 border-teal-500/20 border-t-teal-500 rounded-full animate-spin" />
+                <div className="flex flex-col md:flex-row justify-between items-center gap-8">
+                    <div className="text-center md:text-left space-y-4">
+                        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-500 text-[10px] font-black uppercase tracking-[0.3em]">
+                            <Users size={12} /> Guarded Network
+                        </div>
+                        <h1 className="text-5xl font-black text-gray-900 dark:text-white tracking-tighter uppercase italic">
+                            Family <span className="text-indigo-500">Hub</span>
+                        </h1>
+                        <p className="max-w-md text-gray-500 dark:text-gray-400 font-medium leading-relaxed">
+                            Centralize the health monitoring of your entire family.
+                            Create independent profiles for synchronized medication safety.
+                        </p>
                     </div>
+
+                    <button
+                        onClick={() => setShowModal(true)}
+                        className="group relative flex items-center gap-4 bg-indigo-600 hover:bg-indigo-500 text-white px-8 py-4 rounded-[2rem] font-black text-xs uppercase tracking-widest transition-all duration-500 shadow-xl shadow-indigo-600/30 hover:shadow-indigo-600/50 hover:scale-105 active:scale-95"
+                    >
+                        <UserPlus size={20} className="group-hover:rotate-12 transition-transform" />
+                        Add New Member
+                        <div className="absolute inset-0 rounded-[2rem] bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </button>
+                </div>
+            </div>
+
+            {/* Profiles Container */}
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {/* Main User Profile Card (Read Only here or distinct) */}
+                <div className="glass-card p-8 rounded-[3rem] border-white/5 relative overflow-hidden group">
+                    <div className="absolute top-0 left-0 w-full h-1 bg-indigo-500 opacity-50" />
+                    <div className="flex justify-between items-start mb-6">
+                        <div className="w-20 h-20 rounded-[2rem] bg-indigo-500/10 border-2 border-indigo-500/20 flex items-center justify-center text-indigo-500 shadow-inner group-hover:scale-110 group-hover:rotate-3 transition-all duration-700">
+                            <ShieldPlus size={40} />
+                        </div>
+                        <span className="px-3 py-1 rounded-lg bg-indigo-500/10 text-indigo-500 text-[10px] font-black uppercase tracking-widest">Master Node</span>
+                    </div>
+                    <h3 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight uppercase italic">{user?.name || 'Main Account'}</h3>
+                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mt-2 mb-6">Self Profile • Admin</p>
+                    <div className="flex items-center gap-2 text-teal-400 text-[10px] font-black uppercase tracking-widest">
+                        <Heart size={14} className="animate-pulse" /> Safety Shield Active
+                    </div>
+                </div>
+
+                {loading ? (
+                    Array(2).fill(0).map((_, i) => (
+                        <div key={i} className="glass-card p-10 rounded-[3rem] border-white/5 flex items-center justify-center animate-pulse min-h-[300px]">
+                            <div className="w-12 h-12 border-4 border-white/5 border-t-indigo-500 rounded-full animate-spin" />
+                        </div>
+                    ))
                 ) : members.length === 0 ? (
-                    <div className="md:col-span-2 text-center py-20 glass-card rounded-[2rem] border-white/5 border-dashed">
-                        <p className="text-gray-500 font-medium italic text-lg mb-2">No profiles registered.</p>
-                        <p className="text-xs text-gray-600 uppercase tracking-widest">Connect with your loved ones above</p>
+                    <div className="lg:col-span-2 flex flex-col items-center justify-center p-20 glass-card rounded-[3rem] border-white/5 border-dashed border-2 text-center opacity-60">
+                        <div className="bg-white/5 p-8 rounded-full mb-6 text-gray-500">
+                            <Users size={64} />
+                        </div>
+                        <h3 className="text-xl font-black text-white uppercase italic tracking-widest mb-2">No Nodes Connected</h3>
+                        <p className="text-sm text-gray-500 max-w-xs uppercase font-bold tracking-tight">Expand your safety network by adding family members</p>
                     </div>
                 ) : (
                     members.map(member => (
-                        <div key={member._id} className="glass-card p-8 rounded-[2rem] border-white/5 relative overflow-hidden group transition-all duration-500 hover:bg-white/[0.07] hover:-translate-y-2 shadow-lg hover:shadow-2xl">
-                            <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-teal-500 to-transparent opacity-30" />
-                            <div className="flex justify-between items-start mb-6">
-                                <div className="w-16 h-16 rounded-2xl bg-teal-500/10 flex items-center justify-center text-teal-400 group-hover:scale-110 transition-transform duration-500">
-                                    <User size={32} />
+                        <div key={member._id} className="glass-card p-8 rounded-[3rem] border-white/5 relative overflow-hidden group transition-all duration-700 hover:bg-white/[0.05] hover:-translate-y-3 shadow-xl hover:shadow-indigo-500/10">
+                            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500/40 to-pink-500/40 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+
+                            <div className="flex justify-between items-start mb-8">
+                                <div className="w-20 h-20 rounded-[2rem] bg-white/5 border border-white/10 flex items-center justify-center text-purple-400 group-hover:scale-110 group-hover:rotate-6 transition-all duration-700">
+                                    <User size={40} />
                                 </div>
                                 <button
                                     onClick={() => handleDelete(member._id)}
-                                    className="p-3 rounded-xl bg-red-500/5 text-red-500/40 hover:text-red-500 hover:bg-red-500/20 transition-all opacity-0 group-hover:opacity-100 border border-transparent hover:border-red-500/20"
+                                    className="p-3 rounded-2xl bg-red-500/5 text-red-500/30 hover:text-red-500 hover:bg-red-500/20 transition-all opacity-0 group-hover:opacity-100 border border-transparent hover:border-red-500/20"
                                 >
                                     <Trash2 size={20} />
                                 </button>
                             </div>
-                            <h3 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight mb-2 group-hover:text-indigo-500 transition-colors uppercase">{member.name}</h3>
-                            <p className="text-gray-600 dark:text-gray-500 font-bold text-xs uppercase tracking-widest mb-4">AGE: {member.age} • STATUS: ACTIVE</p>
 
-                            {member.medications && member.medications.length > 0 && (
-                                <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-white/5">
-                                    {member.medications.map((medication, idx) => (
-                                        <span key={idx} className="bg-white/5 text-[10px] font-black text-teal-500/80 px-3 py-1 rounded-lg border border-white/10 uppercase tracking-tighter">
-                                            {medication.name}
-                                        </span>
-                                    ))}
+                            <h3 className="text-3xl font-black text-gray-900 dark:text-white tracking-tighter uppercase italic group-hover:text-purple-400 transition-colors">{member.name}</h3>
+                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mt-2 mb-8">
+                                {member.relation} • {member.age} Y/O Node
+                            </p>
+
+                            <div className="flex items-center justify-between pt-6 border-t border-white/5">
+                                <div className="flex items-center gap-2">
+                                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                                    <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Active Status</span>
                                 </div>
-                            )}
+                                <ChevronRight size={18} className="text-white/20 group-hover:text-purple-400 group-hover:translate-x-1 transition-all" />
+                            </div>
                         </div>
                     ))
                 )}
@@ -126,57 +159,73 @@ const FamilyProfiles = () => {
 
             {/* Modal */}
             {showModal && (
-                <div className="fixed inset-0 bg-black/80 backdrop-blur-xl flex items-center justify-center z-50 p-4 animate-in fade-in duration-300">
-                    <div className="glass-card rounded-[2.5rem] w-full max-w-md p-10 border-white/10 relative overflow-hidden shadow-2xl">
-                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-primary" />
-                        <h2 className="text-3xl font-black text-gray-900 dark:text-white mb-6 tracking-tight uppercase">Add Member</h2>
-                        <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="fixed inset-0 bg-black/90 backdrop-blur-2xl flex items-center justify-center z-[100] p-4 animate-fadeIn">
+                    <div
+                        className="absolute inset-0"
+                        onClick={() => setShowModal(false)}
+                    />
+                    <div className="glass-card rounded-[3.5rem] w-full max-w-lg p-12 border-white/10 relative overflow-hidden shadow-3xl animate-slideUp">
+                        <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-teal-400" />
+
+                        <div className="flex items-center gap-5 mb-10">
+                            <div className="p-4 rounded-3xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/10">
+                                <UserPlus size={32} />
+                            </div>
                             <div>
-                                <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Name</label>
+                                <h2 className="text-3xl font-black text-gray-900 dark:text-white tracking-tight uppercase italic">New Profile</h2>
+                                <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">Initializing health node</p>
+                            </div>
+                        </div>
+
+                        <form onSubmit={handleSubmit} className="space-y-8">
+                            <div className="space-y-2">
+                                <label className="block text-[10px] font-black text-gray-500 uppercase tracking-[0.3em] ml-2">Display Name</label>
                                 <input
                                     type="text"
                                     required
-                                    className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl px-5 py-4 text-gray-900 dark:text-white outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/20 transition-all"
-                                    placeholder="Enter full name"
+                                    className="input-modern !py-5 text-lg font-bold"
+                                    placeholder="e.g. John Doe"
                                     value={formData.name}
                                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                 />
                             </div>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Relationship</label>
+
+                            <div className="grid grid-cols-2 gap-6">
+                                <div className="space-y-2">
+                                    <label className="block text-[10px] font-black text-gray-500 uppercase tracking-[0.3em] ml-2">Relation</label>
                                     <select
                                         required
-                                        className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white outline-none focus:border-teal-500/50 transition-all appearance-none"
+                                        className="input-modern appearance-none !py-5 font-bold"
                                         value={formData.relation}
                                         onChange={(e) => setFormData({ ...formData, relation: e.target.value })}
                                     >
-                                        <option value="" className="bg-gray-900">Select...</option>
-                                        <option value="parent" className="bg-gray-900">Parent</option>
-                                        <option value="child" className="bg-gray-900">Child</option>
-                                        <option value="spouse" className="bg-gray-900">Spouse</option>
-                                        <option value="other" className="bg-gray-900">Other</option>
+                                        <option value="">Status...</option>
+                                        <option value="Parent">Parent</option>
+                                        <option value="Child">Child</option>
+                                        <option value="Spouse">Spouse</option>
+                                        <option value="Other">Other</option>
                                     </select>
                                 </div>
-                                <div>
-                                    <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Age</label>
+                                <div className="space-y-2">
+                                    <label className="block text-[10px] font-black text-gray-500 uppercase tracking-[0.3em] ml-2">Current Age</label>
                                     <input
                                         type="number"
-                                        className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white outline-none focus:border-teal-500/50 transition-all"
+                                        className="input-modern !py-5 font-bold"
                                         placeholder="Age"
                                         value={formData.age}
                                         onChange={(e) => setFormData({ ...formData, age: e.target.value })}
                                     />
                                 </div>
                             </div>
-                            <div className="flex flex-col gap-3 mt-8">
-                                <button type="submit" className="btn-primary w-full !py-4 text-sm font-black uppercase tracking-widest">
-                                    Save Profile
+
+                            <div className="flex flex-col gap-4 pt-6">
+                                <button type="submit" className="btn-primary hover-glow w-full !py-5 text-xs font-black uppercase tracking-[0.3em] shadow-xl shadow-indigo-600/30">
+                                    Initialize Node
                                 </button>
                                 <button
                                     type="button"
                                     onClick={() => setShowModal(false)}
-                                    className="w-full py-4 text-gray-500 font-bold hover:text-white transition-colors uppercase text-[10px] tracking-[0.2em]"
+                                    className="w-full py-4 text-gray-500 font-black hover:text-white transition-colors uppercase text-[10px] tracking-[0.3em]"
                                 >
                                     Cancel
                                 </button>

@@ -1,19 +1,23 @@
-const { GoogleGenerativeAI } = require('@google/generative-ai');
+const OpenAI = require('openai');
 const dotenv = require('dotenv');
 
 dotenv.config();
 
-// Initialize Google Generative AI
-if (!process.env.GEMINI_API_KEY) {
-    console.error('❌ GEMINI_API_KEY is missing from environment variables!');
-} else {
-    console.log('✅ GEMINI_API_KEY is present');
+// Initialize OpenAI client for OpenRouter
+if (!process.env.OPENROUTER_API_KEY) {
+    console.error('❌ OPENROUTER_API_KEY is missing from environment variables!');
 }
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({
-    model: "gemini-1.5-flash",
-    systemInstruction: `You are "MedSuree Assistant", a medication safety awareness assistant integrated into the MedSuree platform.
+const openai = new OpenAI({
+    baseURL: "https://openrouter.ai/api/v1",
+    apiKey: process.env.OPENROUTER_API_KEY || '',
+    defaultHeaders: {
+        "HTTP-Referer": "https://medsuree.com", // Optional, for OpenRouter tracking
+        "X-Title": "MedSuree AI",
+    }
+});
+
+const SYSTEM_INSTRUCTION = `You are "MedSuree Assistant", a medication safety awareness assistant integrated into the MedSuree platform.
 
 YOUR RESPONSIBILITIES:
 1. Explain medication risk analysis results in plain, non-technical language.
@@ -31,14 +35,13 @@ MANDATORY BEHAVIOR:
 - If a user asks for medical advice, diagnosis, or treatment, YOU MUST REFUSE and state: "I am an AI assistant for safety awareness only. Please consult a healthcare professional for medical advice, diagnosis, or treatment."
 - For emergency queries (e.g., chest pain, overdose), tell the user to contact emergency services immediately.
 - Keep responses concise, friendly, and easy to understand.
-- Use soft, supportive tone.`
-});
+- Use soft, supportive tone.`;
 
 const chatWithAI = async (req, res) => {
     try {
         const { message, history } = req.body;
 
-        if (!process.env.GEMINI_API_KEY) {
+        if (!process.env.OPENROUTER_API_KEY) {
             return res.status(503).json({ message: "AI service is currently unavailable (API configuration missing)." });
         }
 
@@ -46,22 +49,23 @@ const chatWithAI = async (req, res) => {
             return res.status(400).json({ message: "Message is required." });
         }
 
-        // Initialize chat with history
-        const chat = model.startChat({
-            history: (history || []).map(msg => ({
-                role: msg.role === 'assistant' ? 'model' : 'user',
-                parts: [{ text: msg.content }]
-            })),
-            generationConfig: {
-                maxOutputTokens: 500,
-                temperature: 0.7,
-            },
+        console.log('Sending request to OpenRouter (gemini-2.0-flash-exp:free)');
+
+        const completion = await openai.chat.completions.create({
+            model: "google/gemini-2.0-flash-001",
+            messages: [
+                { role: "system", content: SYSTEM_INSTRUCTION },
+                ...(history || []).map(msg => ({
+                    role: msg.role === 'assistant' ? 'assistant' : 'user',
+                    content: msg.content
+                })),
+                { role: "user", content: message }
+            ],
+            max_tokens: 500,
+            temperature: 0.7,
         });
 
-        console.log('Sending request to Gemini 2.0 Flash');
-        const result = await chat.sendMessage(message);
-        const response = await result.response;
-        const responseText = response.text();
+        const responseText = completion.choices[0].message.content;
 
         console.log('✅ AI Response received successfully');
         res.json({ response: responseText });
@@ -69,16 +73,16 @@ const chatWithAI = async (req, res) => {
     } catch (error) {
         console.error("AI Error:", error);
 
-        // Check for specific Gemini errors if possible, otherwise generic
-        if (error.message && (error.message.includes('429') || error.message.includes('quota') || error.message.includes('Resource has been exhausted'))) {
-            return res.status(429).json({
-                message: "The AI service is currently at maximum capacity (Quota exceeded). Please try again in 1 minute."
+        // Fallback or Simulation Mode
+        if (error.status === 401 || (error.message && error.message.includes('API key'))) {
+            return res.json({
+                response: "*(Simulation Mode Enabled: Invalid API Key)* \n\nI noticed your OpenRouter API key is currently invalid. To help you test the UI, I'm responding in simulation mode.\n\nI can still help you understand how MedSuree works! You can manage medications, set reminders, and check safety scores in the main dashboard."
             });
         }
 
-        if (error.message && (error.message.includes('safety') || error.message.includes('blocked'))) {
-            return res.status(400).json({
-                message: "I cannot answer this question due to safety constraints. If this is a medical emergency, please contact emergency services."
+        if (error.status === 429) {
+            return res.status(429).json({
+                message: "The AI service is currently at maximum capacity. Please try again in 1 minute."
             });
         }
 

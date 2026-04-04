@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect, useContext } from 'react';
+import { createContext, useState, useEffect, useContext, useMemo } from 'react';
 import axios from 'axios';
 
 // Use environment variable for API URL with fallback
@@ -73,8 +73,12 @@ export const AuthProvider = ({ children }) => {
         setUser(prev => ({ ...prev, subscription: newSubData }));
     };
 
+    const value = useMemo(() => ({
+        user, login, register, logout, loading, updateSubscription
+    }), [user, loading]);
+
     return (
-        <AuthContext.Provider value={{ user, login, register, logout, loading, updateSubscription }}>
+        <AuthContext.Provider value={value}>
             {children}
         </AuthContext.Provider>
     );

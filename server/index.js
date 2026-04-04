@@ -33,6 +33,10 @@ app.use('/api/analysis', require('./routes/analysisRoutes'));
 app.use('/api/ai', require('./routes/aiRoutes'));
 app.use('/api/family', require('./routes/familyRoutes'));
 app.use('/api/reminders', require('./routes/reminderRoutes'));
+app.use('/api/interactions', require('./routes/interactionRoutes'));
+app.use('/api/safety', require('./routes/safetyRoutes'));
+app.use('/api/ocr', require('./routes/ocrRoutes'));
+app.use('/api/diagnostics', require('./routes/diagnosticsRoutes'));
 
 // Initialize Backend Scheduler
 require('./utils/scheduler');

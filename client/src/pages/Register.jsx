@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import { User, Mail, Lock } from 'lucide-react';
 
 const Register = () => {
@@ -9,6 +10,7 @@ const Register = () => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const { register } = useAuth();
+    const { t } = useLanguage();
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
@@ -26,8 +28,8 @@ const Register = () => {
         <div className="max-w-md mx-auto mt-16 glass-card p-12 rounded-[2.5rem] border-white/5 relative overflow-hidden shadow-2xl">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-primary" />
             <div className="text-center mb-10">
-                <h2 className="text-4xl font-black text-gray-900 dark:text-white tracking-tighter uppercase italic">Join <span className="text-teal-400">MedSuree</span></h2>
-                <p className="text-gray-500 font-bold uppercase tracking-[0.2em] text-[10px] mt-4">Initialize Health Protocol</p>
+                <h2 className="text-4xl font-black text-gray-900 dark:text-white tracking-tighter uppercase italic">{t('auth_register_title')} <span className="text-teal-400">MedSuree</span></h2>
+                <p className="text-gray-500 font-bold uppercase tracking-[0.2em] text-[10px] mt-4">{t('auth_register_subtitle')}</p>
             </div>
 
             {error && (
@@ -38,14 +40,14 @@ const Register = () => {
 
             <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-1">
-                    <label className="block text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] ml-2">Full Identity</label>
+                    <label className="block text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] ml-2">{t('auth_register_name_label')}</label>
                     <div className="relative">
                         <User className="absolute left-5 top-1/2 -translate-y-1/2 text-teal-500/40" size={18} />
                         <input
                             type="text"
                             required
-                            className="input-modern pl-14 pr-6 py-4"
-                            placeholder="John Doe"
+                            className="input-modern pl-14 pr-6 py-4 text-gray-900 dark:text-white"
+                            placeholder={t('auth_register_name_placeholder')}
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                         />
@@ -53,14 +55,14 @@ const Register = () => {
                 </div>
 
                 <div className="space-y-1">
-                    <label className="block text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] ml-2">Email Address</label>
+                    <label className="block text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] ml-2">{t('auth_register_email_label')}</label>
                     <div className="relative">
                         <Mail className="absolute left-5 top-1/2 -translate-y-1/2 text-teal-500/40" size={18} />
                         <input
                             type="email"
                             required
-                            className="input-modern pl-14 pr-6 py-4"
-                            placeholder="user@example.com"
+                            className="input-modern pl-14 pr-6 py-4 text-gray-900 dark:text-white"
+                            placeholder={t('auth_register_email_placeholder')}
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                         />
@@ -68,13 +70,13 @@ const Register = () => {
                 </div>
 
                 <div className="space-y-1">
-                    <label className="block text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] ml-2">Access Key</label>
+                    <label className="block text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] ml-2">{t('auth_register_pass_label')}</label>
                     <div className="relative">
                         <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-teal-500/40" size={18} />
                         <input
                             type="password"
                             required
-                            className="input-modern pl-14 pr-6 py-4"
+                            className="input-modern pl-14 pr-6 py-4 text-gray-900 dark:text-white"
                             placeholder="••••••••"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
@@ -84,16 +86,16 @@ const Register = () => {
 
                 <button
                     type="submit"
-                    className="w-full btn-primary !py-5 text-sm font-black uppercase tracking-[0.2em] mt-4"
+                    className="w-full btn-primary hover-glow !py-5 text-sm font-black uppercase tracking-[0.2em] mt-4"
                 >
-                    Create Identity
+                    {t('auth_register_btn')}
                 </button>
             </form>
 
             <p className="text-center mt-8 text-[10px] font-bold text-gray-600 uppercase tracking-widest">
-                Already registered?{' '}
+                {t('auth_register_already')}{' '}
                 <Link to="/login" className="text-teal-400 hover:text-teal-300 transition-colors">
-                    Authenticate
+                    {t('auth_register_login_link')}
                 </Link>
             </p>
         </div>

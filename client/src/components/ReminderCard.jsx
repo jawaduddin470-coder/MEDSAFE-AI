@@ -29,17 +29,17 @@ const REPEAT_LABELS = {
 };
 
 // ─── Live countdown ───────────────────────────────────────────────────────────
-function useCountdown(reminder) {
+function useCountdown(reminder, scheduledDateMs) {
     const [countdown, setCountdown] = useState('');
 
     useEffect(() => {
+        if (reminder.status !== 'upcoming') {
+            setCountdown('');
+            return;
+        }
+
         const update = () => {
-            const status = getStatus(reminder);
-            if (status !== 'upcoming') {
-                setCountdown('');
-                return;
-            }
-            const diff = new Date(`${reminder.date}T${reminder.time}`) - new Date();
+            const diff = scheduledDateMs - Date.now();
             if (diff <= 0) {
                 setCountdown('Now');
                 return;
@@ -54,46 +54,44 @@ function useCountdown(reminder) {
         update();
         const id = setInterval(update, 1_000);
         return () => clearInterval(id);
-    }, [reminder]);
+    }, [reminder.status, scheduledDateMs]);
 
     return countdown;
 }
 
 // ─── ReminderCard ─────────────────────────────────────────────────────────────
 const ReminderCard = ({ reminder, onDelete, onEdit }) => {
-    const status = getStatus(reminder);
-    const cfg = STATUS_CONFIG[status];
-    const countdown = useCountdown(reminder);
+    // Format scheduled time for display - memoized
+    const { scheduledDate, scheduledDateMs, formattedDate, formattedTime } = React.useMemo(() => {
+        const dateObj = new Date(`${reminder.date}T${reminder.time}`);
+        return {
+            scheduledDate: dateObj,
+            scheduledDateMs: dateObj.getTime(),
+            formattedDate: dateObj.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }),
+            formattedTime: dateObj.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })
+        };
+    }, [reminder.date, reminder.time]);
+
+    const status = reminder.status || getStatus(reminder);
+    const cfg = STATUS_CONFIG[status] || STATUS_CONFIG.upcoming;
+    const countdown = useCountdown(reminder, scheduledDateMs);
     const [isAppAlerting, setIsAppAlerting] = useState(false);
 
     useEffect(() => {
         const handleAlert = (e) => {
-            if (e.detail?.id === reminder.id) {
+            if (e.detail?.id === reminder.id || e.detail?._id === reminder._id) {
                 setIsAppAlerting(true);
                 setTimeout(() => setIsAppAlerting(false), 10000);
             }
         };
         window.addEventListener('medsuree-reminder-alert', handleAlert);
         return () => window.removeEventListener('medsuree-reminder-alert', handleAlert);
-    }, [reminder.id]);
+    }, [reminder.id, reminder._id]);
 
     const repeatLabel =
         reminder.repeat === 'custom'
             ? REPEAT_LABELS.custom(reminder.intervalDays)
             : REPEAT_LABELS[reminder.repeat];
-
-    // Format scheduled time for display
-    const scheduledDate = new Date(`${reminder.date}T${reminder.time}`);
-    const formattedDate = scheduledDate.toLocaleDateString('en-IN', {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric',
-    });
-    const formattedTime = scheduledDate.toLocaleTimeString('en-IN', {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: true,
-    });
 
     return (
         <div

@@ -53,7 +53,7 @@ const About = () => {
                                     href="https://merajuddin.lovable.app"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="btn-primary !px-6 !py-3 text-sm flex items-center gap-2 shadow-lg shadow-indigo-500/30"
+                                    className="btn-primary hover-glow !px-6 !py-3 text-sm flex items-center gap-2 shadow-lg shadow-indigo-500/30"
                                 >
                                     <Rocket size={16} /> VIEW PORTFOLIO
                                 </a>
@@ -61,7 +61,7 @@ const About = () => {
                                     href="https://github.com/jawaduddin470-coder-github"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="btn-secondary !px-6 !py-3 text-sm flex items-center gap-2"
+                                    className="btn-secondary hover-glow !px-6 !py-3 text-sm flex items-center gap-2"
                                 >
                                     <Github size={16} /> GITHUB
                                 </a>

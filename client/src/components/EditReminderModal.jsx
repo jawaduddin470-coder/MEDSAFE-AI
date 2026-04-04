@@ -54,7 +54,7 @@ const EditReminderModal = ({ reminder, onClose }) => {
                 className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 w-full max-w-md animate-slideUp"
                 onClick={(e) => e.stopPropagation()}
             >
-                <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4">Edit Reminder</h3>
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white dark:text-gray-100 mb-4">Edit Reminder</h3>
 
                 {error && (
                     <div className="mb-4 px-4 py-2 bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-700 rounded-lg text-sm">

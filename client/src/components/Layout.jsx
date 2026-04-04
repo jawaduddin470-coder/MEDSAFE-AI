@@ -5,10 +5,10 @@ import { Phone, Instagram, Linkedin, Mail } from 'lucide-react';
 const Layout = ({ children }) => {
     return (
         <div className="min-h-screen bg-white dark:bg-[#0a0e1a] flex flex-col relative overflow-x-hidden transition-colors duration-500">
-            {/* Ambient Background Glows */}
-            <div className="fixed inset-0 pointer-events-none overflow-hidden opacity-0 dark:opacity-100 transition-opacity duration-500">
-                <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-teal-500/10 blur-[130px] rounded-full" />
-                <div className="absolute bottom-[10%] right-[-10%] w-[45%] h-[45%] bg-blue-600/10 blur-[130px] rounded-full" />
+            {/* Ambient Background Glows - Optmized to avoid expensive CSS blurs */}
+            <div className="fixed inset-0 pointer-events-none overflow-hidden opacity-0 dark:opacity-100 transition-opacity duration-500 -z-10">
+                <div className="absolute top-[-20%] left-[-10%] w-[70vw] h-[70vw] rounded-full mix-blend-screen opacity-40 transform-gpu" style={{ background: 'radial-gradient(circle, rgba(20,184,166,0.15) 0%, transparent 70%)' }} />
+                <div className="absolute bottom-[-20%] right-[-10%] w-[60vw] h-[60vw] rounded-full mix-blend-screen opacity-40 transform-gpu" style={{ background: 'radial-gradient(circle, rgba(37,99,235,0.15) 0%, transparent 70%)' }} />
             </div>
 
             <Navbar />

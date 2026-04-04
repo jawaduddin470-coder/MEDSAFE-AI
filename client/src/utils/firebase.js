@@ -15,11 +15,17 @@ let app;
 let messaging;
 
 try {
-    if (!firebaseConfig.projectId) {
-        throw new Error('Firebase Project ID is missing. Check your .env file.');
+    if (!firebaseConfig.projectId || firebaseConfig.projectId === 'your_project_id') {
+        console.warn('Firebase Project ID is missing or using placeholder. Firebase features will be disabled.');
+        // Mock messaging
+        messaging = {
+            getToken: () => Promise.resolve(null),
+            onMessage: () => ({})
+        };
+    } else {
+        app = initializeApp(firebaseConfig);
+        messaging = getMessaging(app);
     }
-    app = initializeApp(firebaseConfig);
-    messaging = getMessaging(app);
 } catch (error) {
     console.error('Firebase initialization failed:', error.message);
     // Mock messaging to prevent crashes in other files
@@ -29,7 +35,12 @@ try {
     };
 }
 
+let tokenRequested = false;
+
 export const requestForToken = async () => {
+    if (tokenRequested) return null;
+    tokenRequested = true;
+
     try {
         const currentToken = await getToken(messaging, {
             vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY

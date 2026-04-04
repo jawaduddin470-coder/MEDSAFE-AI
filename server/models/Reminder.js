@@ -39,7 +39,23 @@ const reminderSchema = mongoose.Schema(
         sent: {
             type: Boolean,
             default: false,
-        }
+        },
+        takenAt: {
+            type: Date,
+            default: null,
+        },
+        escalationCount: {
+            type: Number,
+            default: 0,
+        },
+        notes: {
+            type: String,
+            default: '',
+        },
+        familyMember: {
+            type: String,
+            default: null, // null = main user
+        },
     },
     {
         timestamps: true,

@@ -5,23 +5,31 @@ import axios from 'axios'
 import './index.css'
 import { AuthProvider } from './context/AuthContext'
 import { ThemeProvider } from './context/ThemeContext'
+import { LanguageProvider } from './context/LanguageContext'
 
 // Set Axios Base URL for Production
 axios.defaults.baseURL = import.meta.env.VITE_API_URL || '';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-    <React.StrictMode>
-        <ThemeProvider>
+    <ThemeProvider>
+        <LanguageProvider>
             <AuthProvider>
                 <App />
             </AuthProvider>
-        </ThemeProvider>
-    </React.StrictMode>,
-)
+        </LanguageProvider>
+    </ThemeProvider>
+);
 
 // ── Service Worker Registration ────────────────────────────────────────────────
 if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
+    window.addEventListener('load', async () => {
+        // First, unregister ALL existing service workers so stale/buggy ones are cleared
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        for (const reg of registrations) {
+            await reg.unregister();
+        }
+
+        // Re-register the updated service worker
         navigator.serviceWorker
             .register('/sw.js')
             .then((reg) => {
@@ -32,4 +40,3 @@ if ('serviceWorker' in navigator) {
             });
     });
 }
-

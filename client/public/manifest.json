@@ -1,7 +1,7 @@
 {
-  "name": "MedSuree – Smart Medication Reminder",
+  "name": "MedSuree — AI Powered Medication Safety Platform",
   "short_name": "MedSuree",
-  "description": "A smart medication adherence app with reminders, safety checks, and AI-powered risk analysis.",
+  "description": "AI-powered medication safety platform with smart reminders, drug interaction checks, family tracking, and adherence analytics.",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",
@@ -48,7 +48,13 @@
       "src": "/icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
     },
     {
       "src": "/icons/icon-384.png",
@@ -60,7 +66,13 @@
       "src": "/icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ],
   "shortcuts": [

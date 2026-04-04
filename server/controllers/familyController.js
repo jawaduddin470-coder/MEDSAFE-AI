@@ -53,9 +53,16 @@ const deleteFamilyMember = asyncHandler(async (req, res) => {
         throw new Error('User not authorized');
     }
 
+    // Cleanup associated data (Medications and Reminders)
+    const Medication = require('../models/Medication');
+    const Reminder = require('../models/Reminder');
+
+    await Medication.deleteMany({ familyMember: req.params.id });
+    await Reminder.deleteMany({ familyMember: req.params.id });
+
     await member.deleteOne();
 
-    res.status(200).json({ id: req.params.id });
+    res.status(200).json({ id: req.params.id, message: 'Profile and associated data purged successfully.' });
 });
 
 module.exports = {

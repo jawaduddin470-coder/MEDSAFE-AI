@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
-import { Plus, Pill, Clock, Calendar, RefreshCw, AlertTriangle, CheckCircle, Loader } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Plus, Pill, Clock, Calendar, RefreshCw, AlertTriangle, CheckCircle, Loader, Users } from 'lucide-react';
 import { useReminders, getStatus } from '../context/ReminderContext';
+import axios from 'axios';
+
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5001';
 
 const REPEAT_OPTIONS = [
     { value: 'none', label: 'None' },
@@ -16,13 +19,32 @@ const INITIAL_FORM = {
     time: '',
     repeat: 'none',
     intervalDays: 1,
+    familyMember: '', // null/empty means "me"
 };
 
-const ReminderForm = () => {
+const ReminderForm = ({ defaultProfile = 'me' }) => {
     const { reminders, addReminder } = useReminders();
     const [form, setForm] = useState(INITIAL_FORM);
+    const [familyMembers, setFamilyMembers] = useState([]);
     const [submitting, setSubmitting] = useState(false);
     const [feedback, setFeedback] = useState(null); // { type: 'error'|'warning'|'success', message }
+
+    useEffect(() => {
+        const fetchFamily = async () => {
+            try {
+                const { data } = await axios.get(`${API_BASE}/api/family`);
+                setFamilyMembers(data);
+            } catch (err) { console.error(err); }
+        };
+        fetchFamily();
+    }, []);
+
+    useEffect(() => {
+        setForm(prev => ({
+            ...prev,
+            familyMember: defaultProfile === 'me' ? '' : defaultProfile
+        }));
+    }, [defaultProfile]);
 
     const showFeedback = (type, message) => {
         setFeedback({ type, message });
@@ -50,15 +72,17 @@ const ReminderForm = () => {
             (r) =>
                 r.medicineName.toLowerCase() === medicineName.toLowerCase() &&
                 r.date === date &&
-                r.time === time
+                r.time === time &&
+                (r.familyMember === form.familyMember || (!r.familyMember && !form.familyMember))
         );
         if (isDuplicate) {
-            showFeedback('error', '⚠️ An identical reminder already exists for this medicine at the same time.');
+            showFeedback('error', '⚠️ An identical reminder already exists for this profile at the same time.');
             return false;
         }
 
         // 3. Overdose warning – same medicine within 4 hours
-        const upcomingForMed = reminders.filter(
+        const sameProfileReminders = reminders.filter(r => (r.familyMember || '') === (form.familyMember || ''));
+        const upcomingForMed = sameProfileReminders.filter(
             (r) =>
                 r.medicineName.toLowerCase() === medicineName.toLowerCase() &&
                 getStatus(r) === 'upcoming'
@@ -69,7 +93,7 @@ const ReminderForm = () => {
             if (diffHours < 4) {
                 showFeedback(
                     'warning',
-                    `🚨 Overdose Warning: "${medicineName}" is already scheduled within 4 hours (${r.date} at ${r.time}). Please confirm this is safe.`
+                    `🚨 Overdose Warning: "${medicineName}" is already scheduled within 4 hours (${r.date} at ${r.time}). Please confirm safety.`
                 );
                 return false;
             }
@@ -77,7 +101,7 @@ const ReminderForm = () => {
 
         // 4. Custom interval validation
         if (repeat === 'custom' && (!intervalDays || Number(intervalDays) < 1)) {
-            showFeedback('error', 'Please enter a valid interval (minimum 1 day) for custom repeat.');
+            showFeedback('error', 'Please enter a valid interval (minimum 1 day).');
             return false;
         }
 
@@ -89,37 +113,38 @@ const ReminderForm = () => {
         if (!validate()) return;
 
         setSubmitting(true);
-        // Simulate slight processing delay for UX
-        await new Promise((res) => setTimeout(res, 600));
+        const submissionData = { ...form, intervalDays: Number(form.intervalDays) };
+        if (!submissionData.familyMember) delete submissionData.familyMember;
 
-        addReminder({ ...form, intervalDays: Number(form.intervalDays) });
-        setForm(INITIAL_FORM);
-        showFeedback('success', `✅ Reminder for "${form.medicineName}" added successfully!`);
-        setSubmitting(false);
+        try {
+            await addReminder(submissionData);
+            setForm({ ...INITIAL_FORM, familyMember: defaultProfile === 'me' ? '' : defaultProfile });
+            showFeedback('success', `✅ Protocol activated for ${form.medicineName}!`);
+        } catch (err) {
+            showFeedback('error', 'Failed to save reminder.');
+        } finally {
+            setSubmitting(false);
+        }
     };
 
-    // ── Min date = today
     const today = new Date().toISOString().split('T')[0];
 
     return (
         <div className="glass-card p-10 rounded-[2.5rem] border-white/5 relative overflow-hidden group shadow-2xl">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-primary opacity-50" />
+            <div className={`absolute top-0 left-0 w-full h-1 ${form.familyMember ? 'bg-purple-500' : 'bg-indigo-500'} opacity-50`} />
             <h2 className="text-xl font-black text-gray-900 dark:text-white mb-8 flex items-center gap-4">
-                <div className="bg-indigo-500/10 p-4 rounded-2xl text-indigo-400 group-hover:scale-110 transition-transform duration-500 border border-indigo-500/10">
+                <div className={`${form.familyMember ? 'bg-purple-500/10 text-purple-400 border-purple-500/10' : 'bg-indigo-500/10 text-indigo-400 border-indigo-500/10'} p-4 rounded-2xl group-hover:scale-110 transition-transform duration-500 border`}>
                     <Plus size={24} />
                 </div>
                 NEW PROTOCOL
             </h2>
 
-            {/* Feedback banner */}
             {feedback && (
-                <div
-                    className={`mb-4 px-4 py-3 rounded-lg text-sm font-medium flex items-start gap-2 animate-fadeIn
-            ${feedback.type === 'error' ? 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-700' : ''}
-            ${feedback.type === 'warning' ? 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-700' : ''}
-            ${feedback.type === 'success' ? 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-700' : ''}
-          `}
-                >
+                <div className={`mb-4 px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-start gap-2 animate-fadeIn border
+                    ${feedback.type === 'error' ? 'bg-red-500/10 text-red-400 border-red-500/20' : ''}
+                    ${feedback.type === 'warning' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' : ''}
+                    ${feedback.type === 'success' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : ''}
+                `}>
                     {feedback.type === 'warning' && <AlertTriangle size={16} className="mt-0.5 shrink-0" />}
                     {feedback.type === 'success' && <CheckCircle size={16} className="mt-0.5 shrink-0" />}
                     <span>{feedback.message}</span>
@@ -127,11 +152,27 @@ const ReminderForm = () => {
             )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
-                {/* Medicine Name */}
+                {/* Profile Selection */}
                 <div className="space-y-2">
-                    <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">
-                        Medicine Name
-                    </label>
+                    <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">Assign to Profile</label>
+                    <div className="relative">
+                        <Users className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500/40" size={18} />
+                        <select
+                            name="familyMember"
+                            value={form.familyMember}
+                            onChange={handleChange}
+                            className="input-modern pl-14 font-medium appearance-none"
+                        >
+                            <option value="">Myself (Main Profile)</option>
+                            {familyMembers.map(m => (
+                                <option key={m._id} value={m._id}>{m.name} ({m.relation})</option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
+
+                <div className="space-y-2">
+                    <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">Medicine Name</label>
                     <div className="relative">
                         <Pill className="absolute left-5 top-1/2 -translate-y-1/2 text-indigo-500/40" size={18} />
                         <input
@@ -146,11 +187,8 @@ const ReminderForm = () => {
                     </div>
                 </div>
 
-                {/* Dosage */}
                 <div className="space-y-2">
-                    <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">
-                        Dosage
-                    </label>
+                    <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">Dosage</label>
                     <input
                         type="text"
                         name="dosage"
@@ -161,12 +199,9 @@ const ReminderForm = () => {
                     />
                 </div>
 
-                {/* Date + Time */}
                 <div className="grid grid-cols-2 gap-3">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            <Calendar size={14} className="inline mr-1 text-blue-500" /> Date <span className="text-red-500">*</span>
-                        </label>
+                        <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1 mb-2">Date</label>
                         <input
                             type="date"
                             name="date"
@@ -174,34 +209,29 @@ const ReminderForm = () => {
                             min={today}
                             onChange={handleChange}
                             required
-                            className="input-modern"
+                            className="input-modern !py-3"
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            <Clock size={14} className="inline mr-1 text-blue-500" /> Time (HH:MM) <span className="text-red-500">*</span>
-                        </label>
+                        <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1 mb-2">Time</label>
                         <input
                             type="time"
                             name="time"
                             value={form.time}
                             onChange={handleChange}
                             required
-                            className="input-modern"
+                            className="input-modern !py-3"
                         />
                     </div>
                 </div>
 
-                {/* Repeat */}
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        <RefreshCw size={14} className="inline mr-1 text-blue-500" /> Repeat
-                    </label>
+                    <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1 mb-2">Repeat Frequency</label>
                     <select
                         name="repeat"
                         value={form.repeat}
                         onChange={handleChange}
-                        className="input-modern"
+                        className="input-modern appearance-none"
                     >
                         {REPEAT_OPTIONS.map((opt) => (
                             <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -209,12 +239,9 @@ const ReminderForm = () => {
                     </select>
                 </div>
 
-                {/* Custom interval */}
                 {form.repeat === 'custom' && (
                     <div className="animate-fadeIn">
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            Repeat every (days)
-                        </label>
+                        <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1 mb-2">Interval (Days)</label>
                         <input
                             type="number"
                             name="intervalDays"
@@ -227,20 +254,15 @@ const ReminderForm = () => {
                     </div>
                 )}
 
-                {/* Submit */}
                 <button
                     type="submit"
                     disabled={submitting}
-                    className="w-full mt-6 btn-primary !py-5 text-sm font-black uppercase tracking-widest flex items-center justify-center gap-3 transition-all duration-500 hover:scale-[1.02] shadow-indigo-500/20"
+                    className={`w-full mt-6 btn-primary hover-glow !py-5 text-sm font-black uppercase tracking-widest flex items-center justify-center gap-3 transition-all duration-500 hover:scale-[1.02] shadow-lg ${form.familyMember ? 'bg-purple-600 shadow-purple-500/20' : 'shadow-indigo-500/20'}`}
                 >
                     {submitting ? (
-                        <>
-                            <Loader size={20} className="animate-spin" /> SYNCHRONIZING...
-                        </>
+                        <><Loader size={20} className="animate-spin" /> SYNCHRONIZING...</>
                     ) : (
-                        <>
-                            <Plus size={20} /> ACTIVATE PROTOCOL
-                        </>
+                        <><Plus size={20} /> ACTIVATE PROTOCOL</>
                     )}
                 </button>
             </form>

@@ -6,7 +6,11 @@ const User = require('../models/User');
 // @route   GET /api/medications
 // @access  Private
 const getMedications = asyncHandler(async (req, res) => {
-    const medications = await Medication.find({ user: req.user.id });
+    const query = { user: req.user.id };
+    if (req.query.profileId) {
+        query.profileId = req.query.profileId;
+    }
+    const medications = await Medication.find(query);
     res.status(200).json(medications);
 });
 
@@ -26,6 +30,7 @@ const setMedication = asyncHandler(async (req, res) => {
         frequency: req.body.frequency,
         timeOfDay: req.body.timeOfDay,
         notes: req.body.notes,
+        profileId: req.body.profileId || null,
     });
 
     res.status(200).json(medication);
@@ -88,7 +93,7 @@ const deleteMedication = asyncHandler(async (req, res) => {
         throw new Error('User not authorized');
     }
 
-    await medication.remove();
+    await Medication.findByIdAndDelete(req.params.id);
 
     res.status(200).json({ id: req.params.id });
 });

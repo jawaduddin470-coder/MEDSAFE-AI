@@ -33,19 +33,37 @@ self.addEventListener('activate', (event) => {
 // ── Fetch: network-first, fall back to cache ──────────────────────────────────
 self.addEventListener('fetch', (event) => {
     // Only handle GET requests for same origin
-    if (event.request.method !== 'GET') return;
+    const url = new URL(event.request.url);
+    if (event.request.method !== 'GET' || url.origin !== self.location.origin) return;
+
+    // Skip API calls - let the app handle them
+    if (url.pathname.startsWith('/api/')) return;
 
     event.respondWith(
         fetch(event.request)
             .then((response) => {
                 // Cache a clone of valid responses
-                if (response && response.status === 200) {
+                if (response && response.status === 200 && response.type === 'basic') {
                     const clone = response.clone();
                     caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
                 }
                 return response;
             })
-            .catch(() => caches.match(event.request))
+            .catch(async () => {
+                const cachedResponse = await caches.match(event.request);
+                if (cachedResponse) return cachedResponse;
+
+                // If everything fails (network & cache), return a meaningful error or let catch handle it
+                // For navigation requests, we could return index.html if it's a SPA
+                if (event.request.mode === 'navigate') {
+                    return caches.match('/');
+                }
+
+                return new Response('Network error occurred', {
+                    status: 408,
+                    headers: { 'Content-Type': 'text/plain' }
+                });
+            })
     );
 });
 

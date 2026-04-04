@@ -141,6 +141,27 @@
     @apply border-teal-500/40 -translate-y-2;
   }
 
+  /* Global Hover Glow System */
+  .hover-glow {
+    @apply transition-all duration-300 relative overflow-hidden;
+  }
+
+  .hover-glow:hover {
+    @apply scale-[1.02] shadow-indigo-500/30 -translate-y-1 z-10;
+    box-shadow: 0 10px 30px -10px rgba(99, 102, 241, 0.4);
+    border-color: rgba(99, 102, 241, 0.4);
+  }
+
+  .hover-glow:active {
+    @apply scale-[0.98] -translate-y-0.5;
+  }
+
+  .dark .hover-glow:hover {
+    box-shadow: 0 10px 30px -10px rgba(99, 102, 241, 0.6);
+    border-color: rgba(99, 102, 241, 0.5);
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+
   /* Modern Input */
   .input-modern {
     @apply w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 backdrop-blur-sm transition-all duration-200 outline-none;

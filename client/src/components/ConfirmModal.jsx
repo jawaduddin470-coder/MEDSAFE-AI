@@ -39,7 +39,7 @@ const ConfirmModal = ({ message, confirmLabel = 'Delete', onConfirm, onCancel })
                     </div>
                 </div>
 
-                <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 text-center mb-2">
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white dark:text-gray-100 text-center mb-2">
                     Confirm Delete
                 </h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400 text-center mb-6 leading-relaxed">
