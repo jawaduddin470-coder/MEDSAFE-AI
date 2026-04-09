@@ -4,10 +4,10 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 // Initialize Gemini API
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
-const SYSTEM_INSTRUCTION = `You are "MedSuree Assistant", a medication safety awareness assistant integrated into the MedSuree platform.
+const genAI = new GoogleGenerativeAI((process.env.GEMINI_API_KEY || '').trim());
+const model = genAI.getGenerativeModel({ 
+    model: "gemini-1.5-flash",
+    systemInstruction: `You are "MedSuree Assistant", a medication safety awareness assistant integrated into the MedSuree platform.
 
 YOUR RESPONSIBILITIES:
 1. Explain medication risk analysis results in plain, non-technical language.
@@ -25,14 +25,15 @@ MANDATORY BEHAVIOR:
 - If a user asks for medical advice, diagnosis, or treatment, YOU MUST REFUSE and state: "I am an AI assistant for safety awareness only. Please consult a healthcare professional for medical advice, diagnosis, or treatment."
 - For emergency queries (e.g., chest pain, overdose), tell the user to contact emergency services immediately.
 - Keep responses concise, friendly, and easy to understand.
-- Use soft, supportive tone.`;
+- Use soft, supportive tone.`
+});
 
 const chatWithAI = async (req, res) => {
     try {
         const { message, history } = req.body;
 
         if (!process.env.GEMINI_API_KEY) {
-            return res.status(503).json({ message: "AI service is currently unavailable (API configuration missing)." });
+            return res.status(503).json({ message: "AI service config missing (GEMINI_API_KEY)." });
         }
 
         if (!message) {
@@ -42,14 +43,10 @@ const chatWithAI = async (req, res) => {
         console.log('Sending request to Google Gemini (gemini-1.5-flash)');
 
         const chat = model.startChat({
-            history: [
-                { role: "user", parts: [{ text: SYSTEM_INSTRUCTION + "\n\nUnderstood. I will follow these instructions strictly." }] },
-                { role: "model", parts: [{ text: "Hello! I am your MedSuree Assistant. I will help you with medication safety awareness and platform guidance while strictly avoiding medical diagnoses or prescriptions." }] },
-                ...(history || []).map(msg => ({
-                    role: msg.role === 'assistant' ? 'model' : 'user',
-                    parts: [{ text: msg.content }]
-                })),
-            ],
+            history: (history || []).map(msg => ({
+                role: msg.role === 'assistant' ? 'model' : 'user',
+                parts: [{ text: msg.content }]
+            })),
         });
 
         const result = await chat.sendMessage(message);
@@ -59,16 +56,23 @@ const chatWithAI = async (req, res) => {
         res.json({ response: responseText });
 
     } catch (error) {
-        console.error("AI Error:", error);
+        console.error("AI Error Detailed:", error);
 
-        // Fallback for quota issues
-        if (error.message && error.message.includes('429')) {
-            return res.status(429).json({
-                message: "The AI service is currently at maximum capacity. Please try again in 1 minute."
-            });
+        // Capture specific Google API errors to show in UI
+        let errorMessage = "I'm having trouble processing that right now.";
+        
+        if (error.message && error.message.includes('API key not valid')) {
+            errorMessage = "Neural Sync Error: The API Key configured in Render is invalid.";
+        } else if (error.message && error.message.includes('429')) {
+            errorMessage = "Neural cloud reached capacity. Please wait 60 seconds.";
+        } else if (error.message && error.message.includes('SAFETY')) {
+            errorMessage = "Neural safety filters blocked this request. Try rephrasing.";
+        } else if (error.message) {
+            // Send the raw error message if it's safe and helpful
+            errorMessage = `Neural Error: ${error.message.substring(0, 100)}`;
         }
 
-        res.status(500).json({ message: "I'm having trouble processing that right now. Please try again later." });
+        res.status(500).json({ message: errorMessage });
     }
 };
 

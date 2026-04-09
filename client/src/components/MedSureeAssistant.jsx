@@ -69,10 +69,11 @@ const MedSureeAssistant = () => {
                     isError: true,
                 }]);
             } else {
-                setError(t('ai_error_generic') || "Failed to sync with Neural Cloud.");
+                const serverError = err.response?.data?.message || "Communication error. Check your connection.";
+                setError(serverError);
                 setMessages([...newMessages, {
                     role: 'assistant',
-                    content: t('ai_error_response') || "Communication error. Check your connection.",
+                    content: serverError,
                     isError: true,
                 }]);
             }
