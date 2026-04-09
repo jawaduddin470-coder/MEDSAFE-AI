@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { AlertTriangle, CheckCircle, ShieldAlert, RefreshCw, Activity, Zap, ShieldCheck, Info, ChevronRight, TrendingUp } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
