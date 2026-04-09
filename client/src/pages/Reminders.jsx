@@ -8,8 +8,7 @@ import ReminderCard from '../components/ReminderCard';
 import ConfirmModal from '../components/ConfirmModal';
 import EditReminderModal from '../components/EditReminderModal';
 import { useLanguage } from '../context/LanguageContext';
-
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5001';
+import { API_URL as API_BASE } from '../config/apiConfig';
 
 // ─── Stat Card ────────────────────────────────────────────────────────────────
 const StatCard = ({ icon, label, value, colorClass }) => (

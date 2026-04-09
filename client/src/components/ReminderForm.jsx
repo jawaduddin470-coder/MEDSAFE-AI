@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Plus, Pill, Clock, Calendar, RefreshCw, AlertTriangle, CheckCircle, Loader, Users } from 'lucide-react';
 import { useReminders, getStatus } from '../context/ReminderContext';
 import axios from 'axios';
-
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5001';
+import { API_URL as API_BASE } from '../config/apiConfig';
 
 const REPEAT_OPTIONS = [
     { value: 'none', label: 'None' },

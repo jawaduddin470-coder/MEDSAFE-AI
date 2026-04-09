@@ -1,9 +1,7 @@
-import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { AlertTriangle, CheckCircle, ShieldAlert, RefreshCw, Activity, Zap, ShieldCheck, Info, ChevronRight, TrendingUp } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
-
-const API_BASE = `${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api`;
+import { API_URL as API_BASE } from '../config/apiConfig';
 
 const RiskAnalysis = () => {
     const { t } = useLanguage();

@@ -1,8 +1,7 @@
 import { createContext, useContext, useReducer, useEffect, useCallback, useState, useMemo } from 'react';
 import { scheduleReminder, cancelReminder } from '../utils/reminderScheduler';
 import axios from 'axios';
-
-const API_URL = `${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api`;
+import { API_URL } from '../config/apiConfig';
 
 // ─── Status helpers ───────────────────────────────────────────────────────────
 export const getStatus = (reminder) => {

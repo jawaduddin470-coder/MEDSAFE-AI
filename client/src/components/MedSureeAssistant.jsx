@@ -2,8 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { X, Send, ShieldAlert, RotateCcw, MessageCircle, Loader2, Sparkles, Bot, User, Trash2 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import axios from 'axios';
-
-const API_URL = `${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api`;
+import { API_URL } from '../config/apiConfig';
 
 const MedSureeAssistant = () => {
     const { t, lang } = useLanguage();

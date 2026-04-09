@@ -1,8 +1,6 @@
 import { createContext, useState, useEffect, useContext, useMemo } from 'react';
 import axios from 'axios';
-
-// Use environment variable for API URL with fallback
-const API_URL = `${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api`;
+import { API_URL } from '../config/apiConfig';
 
 const AuthContext = createContext();
 

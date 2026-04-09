@@ -6,8 +6,7 @@ import { useReminders, getStatus } from '../context/ReminderContext';
 import { useLanguage } from '../context/LanguageContext';
 import AdherenceChart from '../components/AdherenceChart';
 import axios from 'axios';
-
-const API_URL = `${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api`;
+import { API_URL } from '../config/apiConfig';
 
 const Dashboard = () => {
     const { user } = useAuth();

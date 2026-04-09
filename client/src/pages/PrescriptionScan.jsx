@@ -8,8 +8,7 @@ import {
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useReminders } from '../context/ReminderContext';
-
-const API_URL = `${import.meta.env.VITE_API_URL || 'http://localhost:5001'}/api`;
+import { API_URL } from '../config/apiConfig';
 
 // ─── Helper: today's date string ────────────────────────────────────────────
 const todayStr = () => new Date().toISOString().split('T')[0];

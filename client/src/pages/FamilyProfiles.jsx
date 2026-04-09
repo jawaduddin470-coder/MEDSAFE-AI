@@ -3,8 +3,7 @@ import { Plus, Trash2, User, Heart, Users, UserPlus, ShieldPlus, ChevronRight } 
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
-
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5001';
+import { API_URL as API_BASE } from '../config/apiConfig';
 
 const FamilyProfiles = () => {
     const { t } = useLanguage();

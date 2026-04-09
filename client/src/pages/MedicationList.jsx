@@ -3,8 +3,7 @@ import axios from 'axios';
 import { Plus, Trash2, Pill, Clock, AlertTriangle, Camera, Users, Loader2, ScanLine } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import InteractionWarning from '../components/InteractionWarning';
-
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5001';
+import { API_URL as API_BASE } from '../config/apiConfig';
 
 const MedicationList = () => {
     const { t } = useLanguage();
