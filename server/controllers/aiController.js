@@ -42,11 +42,21 @@ const chatWithAI = async (req, res) => {
 
         console.log('Sending request to Google Gemini (gemini-1.5-flash)');
 
-        const chat = model.startChat({
-            history: (history || []).map(msg => ({
+        // Gemini history MUST start with a 'user' message and alternate roles.
+        // We filter out any leading model messages (like the initial greeting).
+        const formattedHistory = (history || [])
+            .map(msg => ({
                 role: msg.role === 'assistant' ? 'model' : 'user',
                 parts: [{ text: msg.content }]
-            })),
+            }))
+            .filter((msg, index, self) => {
+                // Find the first user message
+                const firstUserIndex = self.findIndex(m => m.role === 'user');
+                return index >= firstUserIndex && firstUserIndex !== -1;
+            });
+
+        const chat = model.startChat({
+            history: formattedHistory,
         });
 
         const result = await chat.sendMessage(message);
