@@ -14,7 +14,12 @@ const app = express();
 
 // Middleware
 const corsOptions = {
-    origin: process.env.FRONTEND_URL || '*',
+    origin: function (origin, callback) {
+        // Allow requests with no origin, or dynamically reflect the requesting origin
+        // This solves the CORS issue where wildcard '*' cannot be used with credentials: true
+        if (!origin) return callback(null, true);
+        return callback(null, origin);
+    },
     credentials: true,
 };
 app.use(cors(corsOptions));
