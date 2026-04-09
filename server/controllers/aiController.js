@@ -1,21 +1,11 @@
-const OpenAI = require('openai');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 const dotenv = require('dotenv');
 
 dotenv.config();
 
-// Initialize OpenAI client for OpenRouter
-if (!process.env.OPENROUTER_API_KEY) {
-    console.error('❌ OPENROUTER_API_KEY is missing from environment variables!');
-}
-
-const openai = new OpenAI({
-    baseURL: "https://openrouter.ai/api/v1",
-    apiKey: process.env.OPENROUTER_API_KEY || '',
-    defaultHeaders: {
-        "HTTP-Referer": "https://medsuree.com", // Optional, for OpenRouter tracking
-        "X-Title": "MedSuree AI",
-    }
-});
+// Initialize Gemini API
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 const SYSTEM_INSTRUCTION = `You are "MedSuree Assistant", a medication safety awareness assistant integrated into the MedSuree platform.
 
@@ -41,7 +31,7 @@ const chatWithAI = async (req, res) => {
     try {
         const { message, history } = req.body;
 
-        if (!process.env.OPENROUTER_API_KEY) {
+        if (!process.env.GEMINI_API_KEY) {
             return res.status(503).json({ message: "AI service is currently unavailable (API configuration missing)." });
         }
 
@@ -49,23 +39,21 @@ const chatWithAI = async (req, res) => {
             return res.status(400).json({ message: "Message is required." });
         }
 
-        console.log('Sending request to OpenRouter (gemini-2.0-flash-exp:free)');
+        console.log('Sending request to Google Gemini (gemini-1.5-flash)');
 
-        const completion = await openai.chat.completions.create({
-            model: "google/gemini-2.0-flash-001",
-            messages: [
-                { role: "system", content: SYSTEM_INSTRUCTION },
+        const chat = model.startChat({
+            history: [
+                { role: "user", parts: [{ text: SYSTEM_INSTRUCTION + "\n\nUnderstood. I will follow these instructions strictly." }] },
+                { role: "model", parts: [{ text: "Hello! I am your MedSuree Assistant. I will help you with medication safety awareness and platform guidance while strictly avoiding medical diagnoses or prescriptions." }] },
                 ...(history || []).map(msg => ({
-                    role: msg.role === 'assistant' ? 'assistant' : 'user',
-                    content: msg.content
+                    role: msg.role === 'assistant' ? 'model' : 'user',
+                    parts: [{ text: msg.content }]
                 })),
-                { role: "user", content: message }
             ],
-            max_tokens: 500,
-            temperature: 0.7,
         });
 
-        const responseText = completion.choices[0].message.content;
+        const result = await chat.sendMessage(message);
+        const responseText = result.response.text();
 
         console.log('✅ AI Response received successfully');
         res.json({ response: responseText });
@@ -73,14 +61,8 @@ const chatWithAI = async (req, res) => {
     } catch (error) {
         console.error("AI Error:", error);
 
-        // Fallback or Simulation Mode
-        if (error.status === 401 || (error.message && error.message.includes('API key'))) {
-            return res.json({
-                response: "*(Simulation Mode Enabled: Invalid API Key)* \n\nI noticed your OpenRouter API key is currently invalid. To help you test the UI, I'm responding in simulation mode.\n\nI can still help you understand how MedSuree works! You can manage medications, set reminders, and check safety scores in the main dashboard."
-            });
-        }
-
-        if (error.status === 429) {
+        // Fallback for quota issues
+        if (error.message && error.message.includes('429')) {
             return res.status(429).json({
                 message: "The AI service is currently at maximum capacity. Please try again in 1 minute."
             });

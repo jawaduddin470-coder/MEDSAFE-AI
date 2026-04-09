@@ -25,7 +25,7 @@ const MedicationList = () => {
 
     const fetchFamily = async () => {
         try {
-            const { data } = await axios.get(`${API_BASE}/api/family`);
+            const { data } = await axios.get(`${API_BASE}/family`);
             setFamilyMembers(data);
         } catch (err) { console.error(err); }
     };
@@ -34,8 +34,8 @@ const MedicationList = () => {
         try {
             setLoading(true);
             const url = selectedProfile === 'me'
-                ? `${API_BASE}/api/medications`
-                : `${API_BASE}/api/medications?profileId=${selectedProfile}`;
+                ? `${API_BASE}/medications`
+                : `${API_BASE}/medications?profileId=${selectedProfile}`;
             const { data } = await axios.get(url);
             setMedications(data);
         } catch (error) {
@@ -72,7 +72,7 @@ const MedicationList = () => {
         reader.onloadend = async () => {
             const base64 = reader.result;
             try {
-                const { data } = await axios.post(`${API_BASE}/api/ocr/scan`, { image: base64 });
+                const { data } = await axios.post(`${API_BASE}/ocr/scan`, { image: base64 });
                 setFormData(prev => ({
                     ...prev,
                     name: data.name || prev.name,
@@ -99,7 +99,7 @@ const MedicationList = () => {
         const existingNames = medications.map(m => m.name);
         if (existingNames.length >= 1 && localStorage.getItem('token')) {
             try {
-                const { data } = await axios.post(`${API_BASE}/api/interactions/check`, {
+                const { data } = await axios.post(`${API_BASE}/interactions/check`, {
                     medications: [...existingNames, formData.name]
                 });
                 if (data.warnings?.length > 0) setInteractionWarnings(data.warnings);
@@ -107,7 +107,7 @@ const MedicationList = () => {
         }
 
         try {
-            await axios.post(`${API_BASE}/api/medications`, formData);
+            await axios.post(`${API_BASE}/medications`, formData);
             setFormData({ name: '', dosage: '', frequency: 'Once daily', timeOfDay: [], notes: '', profileId: selectedProfile === 'me' ? null : selectedProfile });
             fetchMedications();
         } catch (error) {
@@ -120,7 +120,7 @@ const MedicationList = () => {
     const handleDelete = async (id) => {
         if (!window.confirm(t('btn_confirm') + ': Delete this medication?')) return;
         try {
-            await axios.delete(`${API_BASE}/api/medications/${id}`);
+            await axios.delete(`${API_BASE}/medications/${id}`);
             setMedications(medications.filter(med => med._id !== id));
         } catch (error) {
             console.error('Error deleting medication:', error);

@@ -31,7 +31,7 @@ const ReminderForm = ({ defaultProfile = 'me' }) => {
     useEffect(() => {
         const fetchFamily = async () => {
             try {
-                const { data } = await axios.get(`${API_BASE}/api/family`);
+                const { data } = await axios.get(`${API_BASE}/family`);
                 setFamilyMembers(data);
             } catch (err) { console.error(err); }
         };
