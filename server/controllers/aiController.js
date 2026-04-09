@@ -79,7 +79,7 @@ const chatWithAI = async (req, res) => {
             errorMessage = "Neural safety filters blocked this request. Try rephrasing.";
         } else if (error.message) {
             // Send the raw error message if it's safe and helpful
-            errorMessage = `Neural Error: ${error.message.substring(0, 100)}`;
+            errorMessage = `Neural Error: ${error.message.substring(0, 250)}`;
         }
 
         res.status(500).json({ message: errorMessage });
