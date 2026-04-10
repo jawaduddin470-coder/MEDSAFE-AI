@@ -9,6 +9,7 @@ import Layout from './components/Layout';
 import ReminderAlertModal from './components/ReminderAlertModal';
 import MedSureeAssistant from './components/MedSureeAssistant';
 import MedSureeReminderBanner from './components/MedSureeReminderBanner';
+import ErrorBoundary from './components/ErrorBoundary';
 
 // Eager load auth routes
 import Login from './pages/Login';
@@ -80,6 +81,7 @@ function App() {
     if (loading) return <AppLoader />;
 
     return (
+        <ErrorBoundary>
         <ReminderProvider>
             <Router>
                 <Layout>
@@ -119,6 +121,7 @@ function App() {
                 )}
             </Router>
         </ReminderProvider>
+        </ErrorBoundary>
     );
 }
 
