@@ -146,7 +146,7 @@ function getClient() {
  * @param {string} [options.systemInstruction] - Optional system prompt
  * @returns {{ model, keyIndex }}
  */
-function getModel({ modelName = 'gemini-1.5-flash', systemInstruction } = {}) {
+function getModel({ modelName = 'gemini-2.0-flash', systemInstruction } = {}) {
     const client = getClient();
     const modelConfig = { model: modelName };
     if (systemInstruction) modelConfig.systemInstruction = systemInstruction;

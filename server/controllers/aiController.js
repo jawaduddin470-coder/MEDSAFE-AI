@@ -57,7 +57,7 @@ const chatWithAI = async (req, res) => {
         // callWithRetry will automatically switch API keys on quota/key errors
         const responseText = await geminiKeyManager.callWithRetry(async (genAI) => {
             const model = genAI.getGenerativeModel({
-                model: 'gemini-1.5-flash',
+                model: 'gemini-2.0-flash',
                 systemInstruction: SYSTEM_INSTRUCTION,
             });
 
