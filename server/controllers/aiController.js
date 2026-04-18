@@ -21,6 +21,20 @@ MANDATORY BEHAVIOR:
 - Keep responses concise, friendly, and easy to understand.
 - Use soft, supportive tone.`;
 
+// ─── Simple request throttle ──────────────────────────────────────────────────
+// Ensures we don't fire multiple parallel requests that burn through quota faster
+let lastRequestTime = 0;
+const MIN_REQUEST_GAP_MS = 1000; // minimum 1 second between requests
+
+async function throttle() {
+    const now = Date.now();
+    const gap = now - lastRequestTime;
+    if (gap < MIN_REQUEST_GAP_MS) {
+        await new Promise(r => setTimeout(r, MIN_REQUEST_GAP_MS - gap));
+    }
+    lastRequestTime = Date.now();
+}
+
 // ─── Chat Handler ─────────────────────────────────────────────────────────────
 const chatWithAI = async (req, res) => {
     try {
@@ -37,9 +51,9 @@ const chatWithAI = async (req, res) => {
         const status = geminiKeyManager.getStatus();
         console.log(`[AIController] 💬 Request | Key #${status.currentKeyIndex}/${status.totalKeys} | Available: ${status.keysAvailable}`);
 
-        // Format history for @google/genai SDK
-        // Roles: 'user' or 'model'. History must start with 'user'.
-        const formattedHistory = (history || [])
+        // Format conversation history into contents array
+        // @google/genai uses { role, parts: [{ text }] } format
+        const historyContents = (history || [])
             .map(msg => ({
                 role: msg.role === 'assistant' ? 'model' : 'user',
                 parts: [{ text: msg.content }],
@@ -49,28 +63,34 @@ const chatWithAI = async (req, res) => {
                 return index >= firstUserIndex && firstUserIndex !== -1;
             });
 
-        // callWithRetry tries each model × each key automatically
+        // Full conversation: history + current message
+        const contents = [
+            ...historyContents,
+            { role: 'user', parts: [{ text: message }] },
+        ];
+
+        // Throttle to avoid rapid-fire quota exhaustion
+        await throttle();
+
+        // callWithRetry tries model fallbacks + key rotation automatically
         const responseText = await geminiKeyManager.callWithRetry(async (ai, modelName) => {
-            // @google/genai chat API
-            const chat = ai.chats.create({
+            const response = await ai.models.generateContent({
                 model: modelName,
-                history: formattedHistory,
+                contents,
                 config: {
                     systemInstruction: SYSTEM_INSTRUCTION,
                 },
             });
-
-            const response = await chat.sendMessage({ message });
             return response.text;
         });
 
         const finalStatus = geminiKeyManager.getStatus();
-        console.log(`✅ AI Response received (key #${finalStatus.currentKeyIndex})`);
+        console.log(`✅ AI Response ok (key #${finalStatus.currentKeyIndex})`);
 
         res.json({ response: responseText });
 
     } catch (error) {
-        console.error('[AIController] ❌ Error:', error);
+        console.error('[AIController] ❌ Error:', error?.message || error);
 
         let errorMessage = "I'm having trouble processing that right now.";
 
@@ -78,7 +98,7 @@ const chatWithAI = async (req, res) => {
             errorMessage = 'AI service is not configured. Please contact support.';
         } else if (error.message && error.message.toLowerCase().includes('api key not valid')) {
             errorMessage = 'All AI keys are currently exhausted. Please try again in a few minutes.';
-        } else if (error.message && (error.message.includes('429') || error.message.includes('exhausted'))) {
+        } else if (error.message && (error.message.includes('429') || error.message.includes('exhausted') || error.message.includes('quota'))) {
             errorMessage = 'AI service is at capacity. Please wait 30 seconds and try again.';
         } else if (error.message && error.message.includes('SAFETY')) {
             errorMessage = 'Neural safety filters blocked this request. Try rephrasing.';
