@@ -1,10 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const { chatWithAI } = require('../controllers/aiController');
+const { testAllKeys } = require('../controllers/aiDiagnostics');
 const geminiKeyManager = require('../utils/geminiKeyManager');
 
 // POST /api/ai/chat — Main AI assistant endpoint
 router.post('/chat', chatWithAI);
+
+// GET /api/ai/test — Run diagnostic on all 10 keys
+router.get('/test', testAllKeys);
 
 // GET /api/ai/status — Key pool health (safe: no key values exposed)
 router.get('/status', (req, res) => {
