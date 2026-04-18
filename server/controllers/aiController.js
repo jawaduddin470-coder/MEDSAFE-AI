@@ -1,6 +1,6 @@
 const geminiKeyManager = require('../utils/geminiKeyManager');
 
-// ─── System Instruction (shared) ─────────────────────────────────────────────
+// ─── System Instruction ───────────────────────────────────────────────────────
 const SYSTEM_INSTRUCTION = `You are "MedSuree Assistant", a medication safety awareness assistant integrated into the MedSuree platform.
 
 YOUR RESPONSIBILITIES:
@@ -26,11 +26,8 @@ const chatWithAI = async (req, res) => {
     try {
         const { message, history } = req.body;
 
-        // Guard: keys must be configured
         if (geminiKeyManager.API_KEYS.length === 0) {
-            return res.status(503).json({
-                message: 'AI service is not configured. Please contact support.',
-            });
+            return res.status(503).json({ message: 'AI service is not configured. Please contact support.' });
         }
 
         if (!message) {
@@ -38,12 +35,10 @@ const chatWithAI = async (req, res) => {
         }
 
         const status = geminiKeyManager.getStatus();
-        console.log(
-            `[AIController] 💬 Request received | Active key: #${status.currentKeyIndex}/${status.totalKeys} | Keys available: ${status.keysAvailable}`
-        );
+        console.log(`[AIController] 💬 Request | Key #${status.currentKeyIndex}/${status.totalKeys} | Available: ${status.keysAvailable}`);
 
-        // Format chat history for Gemini SDK
-        // History MUST start with a 'user' message and alternate roles.
+        // Format history for @google/genai SDK
+        // Roles: 'user' or 'model'. History must start with 'user'.
         const formattedHistory = (history || [])
             .map(msg => ({
                 role: msg.role === 'assistant' ? 'model' : 'user',
@@ -54,16 +49,19 @@ const chatWithAI = async (req, res) => {
                 return index >= firstUserIndex && firstUserIndex !== -1;
             });
 
-        // callWithRetry will automatically try next model/key on quota or 404 errors
-        const responseText = await geminiKeyManager.callWithRetry(async (genAI, modelName) => {
-            const model = genAI.getGenerativeModel({
+        // callWithRetry tries each model × each key automatically
+        const responseText = await geminiKeyManager.callWithRetry(async (ai, modelName) => {
+            // @google/genai chat API
+            const chat = ai.chats.create({
                 model: modelName,
-                systemInstruction: SYSTEM_INSTRUCTION,
+                history: formattedHistory,
+                config: {
+                    systemInstruction: SYSTEM_INSTRUCTION,
+                },
             });
 
-            const chat = model.startChat({ history: formattedHistory });
-            const result = await chat.sendMessage(message);
-            return result.response.text();
+            const response = await chat.sendMessage({ message });
+            return response.text;
         });
 
         const finalStatus = geminiKeyManager.getStatus();
@@ -80,8 +78,8 @@ const chatWithAI = async (req, res) => {
             errorMessage = 'AI service is not configured. Please contact support.';
         } else if (error.message && error.message.toLowerCase().includes('api key not valid')) {
             errorMessage = 'All AI keys are currently exhausted. Please try again in a few minutes.';
-        } else if (error.message && error.message.includes('429')) {
-            errorMessage = 'AI service is at capacity. All keys are rate-limited. Please wait a moment.';
+        } else if (error.message && (error.message.includes('429') || error.message.includes('exhausted'))) {
+            errorMessage = 'AI service is at capacity. Please wait 30 seconds and try again.';
         } else if (error.message && error.message.includes('SAFETY')) {
             errorMessage = 'Neural safety filters blocked this request. Try rephrasing.';
         } else if (error.message) {
