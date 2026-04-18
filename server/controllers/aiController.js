@@ -1,4 +1,14 @@
-const geminiKeyManager = require('../utils/geminiKeyManager');
+const OpenAI = require('openai');
+
+// Initialize OpenRouter Client
+const openai = new OpenAI({
+    baseURL: 'https://openrouter.ai/api/v1',
+    apiKey: process.env.OPENROUTER_API_KEY || '',
+    defaultHeaders: {
+        'HTTP-Referer': process.env.FRONTEND_URL || 'https://medsuree.com',
+        'X-Title': 'MedSuree AI Assistant',
+    },
+});
 
 // ─── System Instruction ───────────────────────────────────────────────────────
 const SYSTEM_INSTRUCTION = `You are "MedSuree Assistant", a medication safety awareness assistant integrated into the MedSuree platform.
@@ -21,71 +31,51 @@ MANDATORY BEHAVIOR:
 - Keep responses concise, friendly, and easy to understand.
 - Use soft, supportive tone.`;
 
-// ─── Simple request throttle ──────────────────────────────────────────────────
-// Ensures we don't fire multiple parallel requests that burn through quota faster
-let lastRequestTime = 0;
-const MIN_REQUEST_GAP_MS = 1000; // minimum 1 second between requests
-
-async function throttle() {
-    const now = Date.now();
-    const gap = now - lastRequestTime;
-    if (gap < MIN_REQUEST_GAP_MS) {
-        await new Promise(r => setTimeout(r, MIN_REQUEST_GAP_MS - gap));
-    }
-    lastRequestTime = Date.now();
-}
-
 // ─── Chat Handler ─────────────────────────────────────────────────────────────
 const chatWithAI = async (req, res) => {
     try {
         const { message, history } = req.body;
 
-        if (geminiKeyManager.API_KEYS.length === 0) {
-            return res.status(503).json({ message: 'AI service is not configured. Please contact support.' });
+        if (!process.env.OPENROUTER_API_KEY) {
+            return res.status(503).json({ message: 'AI service is not configured (Missing OpenRouter API Key). Please contact support.' });
         }
 
         if (!message) {
             return res.status(400).json({ message: 'Message is required.' });
         }
 
-        const status = geminiKeyManager.getStatus();
-        console.log(`[AIController] 💬 Request | Key #${status.currentKeyIndex}/${status.totalKeys} | Available: ${status.keysAvailable}`);
+        console.log(`[AIController] 💬 Routing request via OpenRouter (Gemini 2.0 Flash)`);
 
-        // Format conversation history into contents array
-        // @google/genai uses { role, parts: [{ text }] } format
-        const historyContents = (history || [])
-            .map(msg => ({
-                role: msg.role === 'assistant' ? 'model' : 'user',
-                parts: [{ text: msg.content }],
-            }))
-            .filter((msg, index, self) => {
-                const firstUserIndex = self.findIndex(m => m.role === 'user');
-                return index >= firstUserIndex && firstUserIndex !== -1;
-            });
-
-        // Full conversation: history + current message
-        const contents = [
-            ...historyContents,
-            { role: 'user', parts: [{ text: message }] },
+        // Format conversation history for OpenAI chat format
+        const formattedMessages = [
+            { role: 'system', content: SYSTEM_INSTRUCTION }
         ];
 
-        // Throttle to avoid rapid-fire quota exhaustion
-        await throttle();
-
-        // callWithRetry tries model fallbacks + key rotation automatically
-        const responseText = await geminiKeyManager.callWithRetry(async (ai, modelName) => {
-            const response = await ai.models.generateContent({
-                model: modelName,
-                contents,
-                config: {
-                    systemInstruction: SYSTEM_INSTRUCTION,
-                },
+        if (history && Array.isArray(history)) {
+            history.forEach(msg => {
+                // Ignore any invalid roles
+                if (msg.role === 'user' || msg.role === 'assistant') {
+                    formattedMessages.push({
+                        role: msg.role,
+                        content: msg.content
+                    });
+                }
             });
-            return response.text;
+        }
+
+        // Add the current user message
+        formattedMessages.push({ role: 'user', content: message });
+
+        const completion = await openai.chat.completions.create({
+            model: 'google/gemini-2.0-flash-001',
+            messages: formattedMessages,
+            max_tokens: 1000,
+            temperature: 0.7,
         });
 
-        const finalStatus = geminiKeyManager.getStatus();
-        console.log(`✅ AI Response ok (key #${finalStatus.currentKeyIndex})`);
+        const responseText = completion.choices[0]?.message?.content || "I couldn't generate a response.";
+
+        console.log(`✅ AI Response ok (OpenRouter)`);
 
         res.json({ response: responseText });
 
@@ -94,14 +84,8 @@ const chatWithAI = async (req, res) => {
 
         let errorMessage = "I'm having trouble processing that right now.";
 
-        if (error.message && error.message.includes('No Gemini API keys configured')) {
-            errorMessage = 'AI service is not configured. Please contact support.';
-        } else if (error.message && error.message.toLowerCase().includes('api key not valid')) {
-            errorMessage = 'All AI keys are currently exhausted. Please try again in a few minutes.';
-        } else if (error.message && (error.message.includes('429') || error.message.includes('exhausted') || error.message.includes('quota'))) {
-            errorMessage = 'AI service is at capacity. Please wait 30 seconds and try again.';
-        } else if (error.message && error.message.includes('SAFETY')) {
-            errorMessage = 'Neural safety filters blocked this request. Try rephrasing.';
+        if (error.message && error.message.includes('429')) {
+            errorMessage = 'AI service is at capacity. Please wait a moment and try again.';
         } else if (error.message) {
             errorMessage = `Neural Error: ${error.message.substring(0, 250)}`;
         }
