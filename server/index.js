@@ -61,7 +61,12 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 app.get('/api/health', (req, res) => {
-    res.json({ status: 'ok', timestamp: new Date() });
+    res.json({ 
+        status: 'ok', 
+        timestamp: new Date(),
+        hasOpenRouterKey: !!process.env.OPENROUTER_API_KEY,
+        keyLength: process.env.OPENROUTER_API_KEY ? process.env.OPENROUTER_API_KEY.length : 0 
+    });
 });
 
 
