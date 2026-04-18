@@ -3,6 +3,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 const path = require('path');
+const geminiKeyManager = require('./utils/geminiKeyManager');
 
 // Load env vars
 dotenv.config();
@@ -77,9 +78,11 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 5001;
 
 app.listen(PORT, '0.0.0.0', () => {
+    const keyStatus = geminiKeyManager.getStatus();
     console.log(`=========================================`);
     console.log(`🚀 SERVER RUNNING IN ${process.env.NODE_ENV?.toUpperCase() || 'DEVELOPMENT'} MODE`);
     console.log(`📡 INTERNAL PORT: ${PORT}`);
     console.log(`🌐 API ENDPOINT: ${process.env.FRONTEND_URL || 'http://localhost:' + PORT}`);
+    console.log(`🔑 GEMINI KEY POOL: ${keyStatus.totalKeys} key(s) loaded | Active: Key #${keyStatus.currentKeyIndex}`);
     console.log(`=========================================`);
 });
