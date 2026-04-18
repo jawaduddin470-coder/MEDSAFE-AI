@@ -10,22 +10,25 @@
  *    • 403  – API key quota exhausted
  *    • "API key not valid" – invalid / revoked key
  *    • "RESOURCE_EXHAUSTED" – daily limit hit
+ *    • 404  – model not available on this key/version
  *
- *  Usage:
- *    const geminiKeyManager = require('../utils/geminiKeyManager');
+ *  Model fallback chain per key:
+ *    gemini-2.0-flash → gemini-1.5-flash → gemini-1.5-flash-latest → gemini-pro
  *
- *    // Get a ready-to-use Gemini model
- *    const { model, keyIndex } = geminiKeyManager.getModel({ modelName, systemInstruction });
- *
- *    // Or run a request with automatic retry on key failure:
- *    const result = await geminiKeyManager.callWithRetry(async (genAI) => {
- *        const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
- *        return await model.generateContent('Hello');
- *    });
+ *  Forces the stable v1 API endpoint (not v1beta) to avoid 404s.
  * ============================================================
  */
 
 const { GoogleGenerativeAI } = require('@google/generative-ai');
+
+// ─── Model fallback chain ─────────────────────────────────────────────────────
+// We try these models in order. If one isn't available on the key, we try the next.
+const MODEL_FALLBACKS = [
+    'gemini-2.0-flash',
+    'gemini-1.5-flash',
+    'gemini-1.5-flash-latest',
+    'gemini-pro',
+];
 
 // ─── Load all configured keys ────────────────────────────────────────────────
 
@@ -55,12 +58,12 @@ let currentIndex = 0;
 // Track which keys are temporarily "cooled down" (quota hit)
 // Key: keyIndex, Value: timestamp when it can be retried
 const cooldownMap = {};
-const COOLDOWN_MS = 60 * 1000; // 1 minute cooldown per key
+const COOLDOWN_MS = 30 * 1000; // 30-second cooldown per key (Gemini free tier refreshes per minute)
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 /**
- * Returns true if the error indicates the current key should be rotated.
+ * Returns true if the error indicates this key is exhausted/invalid → should rotate.
  */
 function isKeyExhaustedError(error) {
     const msg = (error?.message || '').toLowerCase();
@@ -75,7 +78,24 @@ function isKeyExhaustedError(error) {
         msg.includes('rate limit') ||
         msg.includes('too many requests') ||
         msg.includes('invalid api key') ||
-        msg.includes('permission denied')
+        msg.includes('permission denied') ||
+        msg.includes('requests per minute')
+    );
+}
+
+/**
+ * Returns true if the error is a model-not-found (404) → try next model in fallback chain.
+ */
+function isModelNotFoundError(error) {
+    const msg = (error?.message || '').toLowerCase();
+    const status = error?.status || error?.statusCode || 0;
+
+    return (
+        status === 404 ||
+        msg.includes('not found') ||
+        msg.includes('not supported') ||
+        msg.includes('not available') ||
+        msg.includes('model')
     );
 }
 
@@ -101,7 +121,7 @@ function getNextAvailableIndex(startAfter) {
  * Mark the current key as in cooldown and rotate to the next one.
  */
 function rotateKey() {
-    if (API_KEYS.length <= 1) return; // Nothing to rotate to
+    if (API_KEYS.length <= 1) return;
 
     console.warn(`[GeminiKeyManager] 🔄 Key #${currentIndex + 1} exhausted/invalid. Rotating...`);
     cooldownMap[currentIndex] = Date.now() + COOLDOWN_MS;
@@ -113,10 +133,8 @@ function rotateKey() {
         let soonest = 0;
         let soonestTime = Infinity;
         for (let i = 0; i < API_KEYS.length; i++) {
-            if ((cooldownMap[i] || 0) < soonestTime) {
-                soonestTime = cooldownMap[i] || 0;
-                soonest = i;
-            }
+            const t = cooldownMap[i] || 0;
+            if (t < soonestTime) { soonestTime = t; soonest = i; }
         }
         currentIndex = soonest;
     } else {
@@ -130,60 +148,68 @@ function rotateKey() {
 
 /**
  * Returns a GoogleGenerativeAI client using the current active key.
+ * Forces the stable `v1` API version to avoid v1beta 404 issues.
  */
 function getClient() {
     if (API_KEYS.length === 0) {
         throw new Error('No Gemini API keys configured. Set GEMINI_API_KEY_1 through GEMINI_API_KEY_10 in your environment.');
     }
-    return new GoogleGenerativeAI(API_KEYS[currentIndex]);
+    // Pass apiVersion: 'v1' if the SDK supports it (v0.21+)
+    try {
+        return new GoogleGenerativeAI(API_KEYS[currentIndex], { apiVersion: 'v1' });
+    } catch (_) {
+        // Older SDK version — fall back to default
+        return new GoogleGenerativeAI(API_KEYS[currentIndex]);
+    }
 }
 
 /**
- * Returns a configured Gemini model using the current active key.
+ * Run an async callback that receives a `GoogleGenerativeAI` client + current model name.
+ * Automatically retries with:
+ *   1. The next model in the fallback chain (on 404 model-not-found errors)
+ *   2. The next API key (on 429/403/quota errors)
  *
- * @param {object} options
- * @param {string} options.modelName        - e.g. 'gemini-1.5-flash'
- * @param {string} [options.systemInstruction] - Optional system prompt
- * @returns {{ model, keyIndex }}
- */
-function getModel({ modelName = 'gemini-2.0-flash', systemInstruction } = {}) {
-    const client = getClient();
-    const modelConfig = { model: modelName };
-    if (systemInstruction) modelConfig.systemInstruction = systemInstruction;
-
-    return {
-        model: client.getGenerativeModel(modelConfig),
-        keyIndex: currentIndex,
-    };
-}
-
-/**
- * Run an async callback that receives a `GoogleGenerativeAI` client.
- * Automatically retries with the next key if a quota / key error occurs.
- * Tries up to `maxRetries` different keys before throwing.
- *
- * @param {function(GoogleGenerativeAI): Promise<any>} fn - Your Gemini logic
- * @param {number} maxRetries - Max number of key rotations to attempt (default: all keys)
+ * @param {function(client: GoogleGenerativeAI, modelName: string): Promise<any>} fn
  * @returns {Promise<any>}
  */
-async function callWithRetry(fn, maxRetries) {
-    const max = typeof maxRetries === 'number' ? maxRetries : API_KEYS.length;
+async function callWithRetry(fn) {
+    const maxKeyAttempts = API_KEYS.length;
+    let lastError;
 
-    for (let attempt = 0; attempt <= max; attempt++) {
-        try {
-            const client = getClient();
-            return await fn(client);
-        } catch (error) {
-            if (isKeyExhaustedError(error) && attempt < max) {
-                console.warn(`[GeminiKeyManager] Key error on attempt ${attempt + 1}: ${error.message}`);
-                rotateKey();
-                // Brief pause before retry to respect rate limits
-                await new Promise(r => setTimeout(r, 500));
-            } else {
-                throw error; // Non-key error or out of retries — bubble up
+    for (let keyAttempt = 0; keyAttempt <= maxKeyAttempts; keyAttempt++) {
+        // Try each model in the fallback chain for this key
+        for (let modelIdx = 0; modelIdx < MODEL_FALLBACKS.length; modelIdx++) {
+            const modelName = MODEL_FALLBACKS[modelIdx];
+            try {
+                const client = getClient();
+                console.log(`[GeminiKeyManager] 🔑 Trying key #${currentIndex + 1}, model: ${modelName}`);
+                return await fn(client, modelName);
+            } catch (error) {
+                lastError = error;
+
+                if (isModelNotFoundError(error)) {
+                    // This key doesn't support this model — try the next model
+                    console.warn(`[GeminiKeyManager] ⚠️ Model "${modelName}" not available. Trying next model...`);
+                    await new Promise(r => setTimeout(r, 200));
+                    continue;
+                }
+
+                if (isKeyExhaustedError(error) && keyAttempt < maxKeyAttempts) {
+                    // Key is rate-limited/exhausted — rotate to next key
+                    console.warn(`[GeminiKeyManager] ⚡ Key #${currentIndex + 1} rate-limited: ${error.message}`);
+                    rotateKey();
+                    await new Promise(r => setTimeout(r, 500));
+                    break; // Break model loop → try all models again on new key
+                }
+
+                // Non-retriable error — bubble up immediately
+                throw error;
             }
         }
     }
+
+    // All keys × all models exhausted
+    throw lastError || new Error('All Gemini API keys and model fallbacks exhausted.');
 }
 
 /**
@@ -194,15 +220,17 @@ function getStatus() {
     return {
         totalKeys: API_KEYS.length,
         currentKeyIndex: currentIndex + 1,
+        availableModels: MODEL_FALLBACKS,
         keysInCooldown: Object.entries(cooldownMap)
             .filter(([, until]) => now < until)
             .map(([idx]) => Number(idx) + 1),
         keysAvailable: API_KEYS.length - Object.values(cooldownMap).filter(until => now < until).length,
+        cooldownSeconds: COOLDOWN_MS / 1000,
     };
 }
 
 // ─── Startup log ─────────────────────────────────────────────────────────────
 
-console.log(`[GeminiKeyManager] 🔑 Loaded ${API_KEYS.length} Gemini API key(s). Active: Key #${currentIndex + 1}`);
+console.log(`[GeminiKeyManager] 🔑 Loaded ${API_KEYS.length} Gemini key(s) | Models: ${MODEL_FALLBACKS.join(' → ')}`);
 
-module.exports = { getClient, getModel, callWithRetry, rotateKey, getStatus, API_KEYS };
+module.exports = { getClient, callWithRetry, rotateKey, getStatus, API_KEYS, MODEL_FALLBACKS };

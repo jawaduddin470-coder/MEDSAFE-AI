@@ -54,10 +54,10 @@ const chatWithAI = async (req, res) => {
                 return index >= firstUserIndex && firstUserIndex !== -1;
             });
 
-        // callWithRetry will automatically switch API keys on quota/key errors
-        const responseText = await geminiKeyManager.callWithRetry(async (genAI) => {
+        // callWithRetry will automatically try next model/key on quota or 404 errors
+        const responseText = await geminiKeyManager.callWithRetry(async (genAI, modelName) => {
             const model = genAI.getGenerativeModel({
-                model: 'gemini-2.0-flash',
+                model: modelName,
                 systemInstruction: SYSTEM_INSTRUCTION,
             });
 
